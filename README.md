@@ -16,7 +16,7 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 	Titlescreen:
 		Start: Begin
     
-# Changes from the Scratch version are
+# Changes from the Scratch version are:
 	No achievements (for now...)
 	No Extras
 	No Vector graphics (GBA can't handle it.)
