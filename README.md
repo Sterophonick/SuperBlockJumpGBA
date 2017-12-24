@@ -17,8 +17,7 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 		Start: Begin
     
 # Information:
-Changes from the Scratch version are:
-No achievements (for now...)
+Changes from the Scratch version are:No achievements (for now...)
 No Extras
 No Vector graphics (GBA can't handle it.)
 Only one music track, 3 audio files total.
