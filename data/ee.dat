@@ -1,0 +1,91 @@
+
+ROMICAN'TTHINKOFTHERELEASEDATESOYABOI SBJADVGBAIMDSWAG
+
+ROM 10:80:1400:900:1920:99
+
+Super Block Jump Game Boy Advance Edition
+Genre
+	Indie Platformer, Homebrew
+----------------------------------------------------------------
+Rating: All Ages
+	(brief shooting
+	derpy violence
+	crazy music
+	nerdy stuff
+	difficulty towards da end
+	takes a lot of time to beat dis gaem bruh, with saving bruh, but dis is a debug feature that will be removed in later versions bruh.
+	SO MUCH MLG SWAG! MOM GET THE CAMERA!!!!!)
+----------------------------------------------------------------
+Coding, gfx, level design by imadog54.
+Testing by
+	Sackboylvr567
+	Rigman2323
+
+----------------------------------------------------------------
+SRAM_V112
+
+01010100 01101000 01100101 00100000 01000110 01000101 01011010 00100000 01001100 01100101 01110110 01100101 01101100 00100000 01100011 01101111 01100100 01100101 00100000 01101001 01110011 00100000 01010101 01110000 00100000 01010101 01110000 00100000 01000100 01101111 01110111 01101110 00100000 01000100 01101111 01110111 01101110 00100000 01001100 01100101 01100110 01110100 00100000 01010010 01101001 01100111 01101000 01110100 00100000 01001100 01100101 01100110 01110100 00100000 01010010 01101001 01100111 01101000 01110100 00100000 01000010 00100000 01000001 00100000 01010011 01110100 01100001 01110010 01110100 00100000 01101100 01101111 01101100 00100000 01101001 00100000 01101010 01110101 01110011 01110100 00100000 01110111 01100001 01110011 01110100 01100101 01100100 00100000 01111001 01101111 00100000 01110100 01101001 01101101 01100101 
+
+HERE COME DAT BOI CRUD WADDUP
+HERE COME DAT BOI CRUD WADDUP
+HERE COME DAT BOI CRUD WADDUP
+HERE COME DAT BOI CRUD WADDUP
+WATCH HIM ROLLIN WATCH HIM GO
+WATCH HIM ROLLIN WATCH HIM GO
+WATCH HIM ROLLIN WATCH HIM GO
+WATCH HIM ROLLIN WATCH HIM GO
+HE BE ROLLIN DOWN DA STREET
+HE BE ROLLIN TO DA BEAT
+HE BE ROLLIN DOWN DA STREET
+HE BE ROLLIN TO DA BEAT
+WATCH HIM GO
+CRUD WADDUP
+WATCH HIM GO
+O CRUD WADDUP
+
+ MMMMM
+M     M
+M        MMM  MMMM   MMMM
+M           M M   M M
+M        MMMM M   M  MMM
+M     M M   M M   M     M
+ MMMMM   MMM  M   M MMMM 
+			 MMMM   MMM  MMM
+			 M   M M   M  M
+			 MMMM  M   M  M
+			 M   M M   M  M
+			 M   M M   M  M
+			 M   M M   M  M
+			 MMMM   MMM  MMM
+
+i can do a mickey mouse impression
+i can do an elmo impression
+
+CREDIT TO ALL THAT SUPPORT GAME BOY ADVANCE HOMEBREW DEVELOPMENT
+
+NOTICE:
+	THIS GAME IS NOT LICENSED BY OR ENDORSED BY NINTENDO OF AMERICA, NINTENDO OF JAPAN, OR ANY OF ITS SUBSIDIARIES.
+	THIS GAME WAS NOT DEVELOPED WITH ANY OFFICIAL SDKS, TOOLS, OR INFORMATION.
+	GAME BOY AND NINTENDO ARE TRADEMARKS OF NINTENDO CO. LTD.
+	THIS GAME IS FREEWARE. IT IS LICENSED UNDER THE CREATIVE COMMONS (PD). IF YOU HAPPENED TO HAVE PAID FOR THIS GAME, I SUGGEST THAT YOU GET A REFUND ASAP. I WILL NOT SELL IT; IT IS FOR FREE. 
+
+I WOULD RECCOMEND USING ORIGINAL GBA HARDWARE TO PLAY THIS GAME, BUT USING AN EMULATOR SUCH AS mGBA, NO$GBA, OR VBA SHOULD WORK FINE.
+
+This game's source code is included, so if you want to modify this game for your own amusement, be my guest. 
+If you were to edit this game in some way, you will need the following tools (you can get some of these from gbadev.org or other places):
+	DevKit Advance (compile the ROM File)
+	Microsoft Visual Studio 2017 (Programming)
+	gbafix (Fix the ROM header so that the game can run on original hardware)
+	Bimbo (Convert backgrounds)
+	mid2s3m (Convert audio)
+	pcx2sprite (Convert objects)
+	Realworld Paint (make/edit gfx)
+	mGBA or EZ-Flash IV (Testing)
+
+Issues that I have acknowledged and don't know how to fix:
+	Input lags for about 1/2 a second in gameplay.
+
+Notes about compilation:
+	*Recompiling the game takes a long time, I know. This is because gcc can only do so much at a time.
+	*The process wasn't as simple as converting the original program. The game had to be rewritted from scratch, and what made it more difficult was that I had to write it in another language.
+	*There is a bit of documentation in the coding to show what exactly the game is instructed to do.
