@@ -1,0 +1,1 @@
+build/rotostuff.o: data/rotostuff.c

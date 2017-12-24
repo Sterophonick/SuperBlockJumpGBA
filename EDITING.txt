@@ -1,0 +1,10 @@
+Prerequisites:
+	Windows XP 32/64bit or higher
+	DevKitARM
+	gbafix
+	pcx2sprite
+	ImageMagick
+	An image editor
+	A code editor (preferrably MS Visual Studio)
+	An emulator or a flashcart
+	
