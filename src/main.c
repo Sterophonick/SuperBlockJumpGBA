@@ -1,6 +1,6 @@
 /* Main source file for Super Block Jump Game Boy Advance Edition. Feel free to edit and recompile the source if you want. If you are to recompile the game, You will need DevKit Advance and place it in C:\devkitadv\*/
 void vblfunc();
-#include <agb_lib.h> //main function library (that I made)
+#include "..\inc\agb_lib.h" //main function library (that I made)
 u16* ExtWRAM = (u16*)0x02000000;
 #include <string.h> //main function library (that I made)
 #include "..\inc\defs.h" //external definitions, variables
