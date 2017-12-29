@@ -28,7 +28,16 @@ SRAM Slots:
 4. File 3 
 5.  RNG Seed (For random number generation)
 */
-
+static inline u32 BiosCheckSum() { 
+//--------------------------------------------------------------------------------- 
+   register u32 result; 
+   #if   defined   ( __thumb__ ) 
+      __asm ("SWI   0x0d\nmov %0,r0\n" :  "=r"(result) :: "r1", "r2", "r3"); 
+   #else 
+      __asm ("SWI   0x0d<<16\nmov %0,r0\n" : "=r"(result) :: "r1", "r2", "r3"); 
+   #endif 
+   return result; 
+} 
 #define BLOCK_OAM 0
 #define GOAL_OAM 48
 #define GEM_OAM 296
@@ -55,6 +64,12 @@ void playSound(int s) //Sound play Function
 
 int main() //Entry Point
 {
+	if(!((BiosCheckSum()==0xBAAE187F)||(BiosCheckSum()==0xBAAE1880)))
+	{
+		SetMode(MODE_3 | BG2_ENABLE); //Mode 3, Bg2 on
+		Print(-1, 0, "ERROR. BIOS INVALID. 0X1", RED, BLACK); //draws text
+		while(1);
+	}
 	if ((keyDown(KEY_A))AND(keyDown(KEY_B))) { //SRAM Clear Function
 		FadeOut(0); //Quick fade out
 		while (((keyDown(KEY_A))OR(keyDown(KEY_B)))); //waits until a or b is not pressed
