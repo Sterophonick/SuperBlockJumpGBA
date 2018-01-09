@@ -1,6 +1,6 @@
 //variables
-int px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, crash, pause, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, saveone, savetwo, savethree, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, wait, bx = 17, by = 128, temp;
-int levelmax = 136;
+int px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, crash, pause, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, saveone, savetwo, savethree, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, unreadchieves, wait, bx = 17, by = 128, temp, studentchieve, parkourchieve, captainchieve, deathchieve, jumpchieve, cryptchieve, harpchieve, gdashchieve, burnchieve, mazechieve, gemchieve, pongchieve, portalchieve, monsterchieve, jumps, pookachieve, creepdeaths;
+int levelmax = 138;
 char* buf[255];
 char *hello;
 double x, y;

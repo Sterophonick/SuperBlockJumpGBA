@@ -1,3 +1,20 @@
+char achdata[] = {
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+
+const char achdatax[] = {
+	10,10,10,10,10,10,10,10,108,108,108,108,108,108,108,108,108,108,108,186
+};
+
+const char achdatay[] = {
+	20,33,46,59,72,85,98,111,20,33,46,59,72,85,98,111,124,137,150,20
+};
+void achievement(int id)
+{
+	achdata[id] = 1;
+	MoveSprite(&sprites[50], 232, 152);
+	unreadchieves = 1;
+}
 
 // UnCompress LZ77 Data to WRAM
 void LZ77UnCompWRAM(unsigned long source, unsigned long dest) {
@@ -25,7 +42,6 @@ void varreset()
 	by = 108;
 	x = 0;
 	y = 0;
-	deaths = 0;
 	gravity = 0;
 	restart = 0;
 }
@@ -62,6 +78,7 @@ void bottomcol()
 		if ((keyDown(KEY_A))AND(gravity == 0))
 		{
 			y = -4.05;
+				jumps++;
 		}
 	}
 }
@@ -80,6 +97,7 @@ void rightcol()
 				y = 4.05;
 			}
 			x = -5;
+				jumps++;
 		}
 		else
 		{
@@ -104,6 +122,7 @@ void leftcol()
 				y = 4.05;
 			}
 			x = 5;
+				jumps++;
 		}
 		else
 		{
@@ -123,6 +142,7 @@ void topcol()
 			by -= y;
 			y = 0;
 			y += 0.24;
+				jumps++;
 			MoveSprite(&sprites[1], bx, by);
 		}
 		else {
@@ -163,6 +183,7 @@ void topcol()
 			if (keyDown(KEY_A))
 			{
 				y = 4.05;
+				jumps++;
 			}
 		}
 	}
@@ -176,6 +197,11 @@ void die()
 	y = 0;
 	restart = 0;
 	gravity = 0;
+	deaths++;
+	if(level==18)
+	{
+		creepdeaths++;
+	}
 }
 void physics()
 {
@@ -225,6 +251,41 @@ void physics()
 		levels();
 		varreset();
 		musici+=8;
+		if(level==2)
+		{
+			achievement(17);
+		}
+		if(level==8)
+		{
+			achievement(0);
+		}
+		if(level==19)
+		{
+			if(creepdeaths==0)
+			{
+				achievement(14);
+			}
+		}
+		if(level==37)
+		{
+			achievement(15);
+		}
+		if(level==49)
+		{
+			achievement(9);
+		}
+		if(level==52)
+		{
+			achievement(19);
+		}
+		if(level==100)
+		{
+			achievement(1);
+		}
+		if(level==134)
+		{
+			achievement(13);
+		}
 	}
 }
 
@@ -356,7 +417,7 @@ void *gbfs_copy_obj(void *dst,
 void levels() {
 	const GBFS_FILE *dat = find_first_gbfs_file(find_first_gbfs_file);
 	sprintf(buf, "l%d.lz", level);
-	if(level==137)
+	if(level==138)
 	{
 		LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, "end.lz", 0), (unsigned long)videoBuffer);
 	}else{
