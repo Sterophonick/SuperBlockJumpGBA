@@ -17,10 +17,9 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 		Start: Begin
     
 # Changes from the Scratch version are:
-	No achievements (for now...)
 	No Extras
 	No Vector graphics (GBA can't handle it.)
-	Only one music track, 3 audio files total.
+	Only one music track
 	Removed block color changing
 	Removed Debug Mode
 	removed snow
@@ -78,3 +77,5 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 	Bimbo (GFX)
 
 Written in C with HeartLib, compiled with DevKitARM.
+
+I'm surprised that this game is only about 4.8 Megybytes, which is tiny, compared to the 45.9 MB needed for the Scratch version.
