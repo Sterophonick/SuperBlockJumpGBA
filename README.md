@@ -77,4 +77,4 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 	gbfs, padbin, grit, bmp2bin, GBACrusher (GFX Compression)
 	Bimbo (GFX)
 
-Written in C, compiled with DevKitARM.
+Written in C with HeartLib, compiled with DevKitARM.

@@ -1,10 +1,10 @@
 Prerequisites:
 	Windows XP 32/64bit or higher
-	DevKitARM
+	DevKitARM r47
 	gbafix (from DarkFader)
 	Columniser (from gbadev.org)
 	ImageMagick
 	An image editor (I use RealWorld Paint)
 	A code editor (preferrably MS Visual Studio)
 	An emulator or a flashcart
-	
+	Heartlib Installed into DevKitARM
