@@ -78,4 +78,4 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 
 Written in C with HeartLib, compiled with DevKitARM.
 
-I'm surprised that this game is only about 4.8 Megybytes, which is tiny, compared to the 45.9 MB needed for the Scratch version.
+I'm surprised that this game is only about 4.8 Megabytes, which is tiny, compared to the 45.9 MB needed for the Scratch version.
