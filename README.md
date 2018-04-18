@@ -62,8 +62,8 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 	Microsoft Visual Studio Community 2017 (Code)
 	MS Paint (GFX)
 	RealWorld Paint (GFX)
-	Columniser (Sprite GFX)
-	mid2s3m (Sound)
+	Usenti (Sprite GFX)
+	mmutil (Sound)
 	Scratch 2 (Original)
 	Various image converters
 	Windows 10
@@ -74,7 +74,6 @@ An official Game Boy Advance Port of Super Block Jump made by the same creator o
 	ImageMagick (GFX)
 	EZ-Flash IV (Game Testing)
 	gbfs, padbin, grit, bmp2bin, GBACrusher (GFX Compression)
-	Bimbo (GFX)
 
 Written in C with HeartLib, compiled with DevKitARM.
 
