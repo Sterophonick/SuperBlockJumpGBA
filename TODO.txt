@@ -1,0 +1,5 @@
+Add Extra frames for kernel panic bcuz I can compress them.
+strengthen physics collision detection (somehow)
+Keyboard Support?
+150+ Levels
+Multiple-Cart multiplayer via link cable.

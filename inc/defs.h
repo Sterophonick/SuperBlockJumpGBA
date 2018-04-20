@@ -1,6 +1,9 @@
 //variables
-int px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time2, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, pause, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, unreadchieves, wait, bx = 17, by = 128, temp, studentchieve, parkourchieve, captainchieve, deathchieve, jumpchieve, cryptchieve, harpchieve, gdashchieve, burnchieve, mazechieve, gemchieve, pongchieve, portalchieve, monsterchieve, jumps, pookachieve, creepdeaths;
+int bx = 17, by = 128, px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time2, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, pause, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, unreadchieves, wait, temp, studentchieve, parkourchieve, captainchieve, deathchieve, jumpchieve, cryptchieve, harpchieve, gdashchieve, burnchieve, mazechieve, gemchieve, pongchieve, portalchieve, monsterchieve, jumps, pookachieve, creepdeaths;
 u8 saveone, savetwo, savethree, crash;
+u8 wipe;
+u8 rand1;
+u8 deathstate, deathframe;
 int levelmax = 138;
 char* buf[255];
 char *hello;
@@ -117,3 +120,13 @@ extern const unsigned char logotheme[128016];
 extern const unsigned char punch[9184];
 extern const unsigned short sprs[8192];
 extern const unsigned short sprsPalette[256];
+extern const unsigned short shrink1Tiles[];
+extern const unsigned short shrink2Tiles[];
+extern const unsigned short shrink3Tiles[];
+extern const unsigned short shrink4Tiles[];
+extern const unsigned short shrink5Tiles[];
+extern const unsigned short shrink6Tiles[];
+extern const unsigned short shrink7Tiles[];
+extern const unsigned short shrink8Tiles[];
+extern const unsigned short shrink9Tiles[];
+extern const unsigned short shrinkaTiles[];

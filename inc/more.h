@@ -16,33 +16,36 @@ const char achdatay[] = {
 };
 void achievement(int id)
 {
-	achdata[id] = 1;
-	hrt_SetOBJXY(&sprites[50], 232, 152);
-	unreadchieves = 1;
-	if (level == 103)
+	if (achdata[id] == 0)
 	{
-		mm_sound_effect fez = {
-			{ SFX_SECRETSOLVED},			// id
-			(int)(1.0f * (1 << 10)),	// rate
-			0,		// handle
-			255,	// volume
-			0,	// panning
-		};
-		mm_sfxhand fezc = 0;
-		fezc = mmEffectEx(&fez);
+		achdata[id] = 1;
+		hrt_SetOBJXY(&sprites[50], 232, 152);
+		unreadchieves = 1;
+		if (level == 103)
+		{
+			mm_sound_effect fez = {
+				{ SFX_SECRETSOLVED},			// id
+				(int)(1.0f * (1 << 10)),	// rate
+				0,		// handle
+				255,	// volume
+				0,	// panning
+			};
+			mm_sfxhand fezc = 0;
+			fezc = mmEffectEx(&fez);
+		}
+		else
+		{
+			mm_sound_effect ach = {
+				{ SFX_ACHIEVEMENT },			// id
+				(int)(1.0f * (1 << 10)),	// rate
+				0,		// handle
+				255,	// volume
+				0,	// panning
+			};
+			mm_sfxhand achi = 0;
+			achi = mmEffectEx(&ach);
+		}
 	}
-	else
-	{
-		mm_sound_effect ach = {
-			{ SFX_ACHIEVEMENT },			// id
-			(int)(1.0f * (1 << 10)),	// rate
-			0,		// handle
-			255,	// volume
-			0,	// panning
-	};
-	mm_sfxhand achi = 0;
-	achi = mmEffectEx(&ach);
-}
 }
 void varreset()
 {
@@ -211,13 +214,13 @@ void topcol()
 
 void die()
 {
-    bx = 8;
-    by = 108;
     x = 0;
     y = 0;
     restart = 0;
     gravity = 0;
     deaths++;
+	deathstate = 1;
+	deathframe = 0;
     if(level==18) {
         creepdeaths++;
     }
@@ -233,6 +236,9 @@ void die()
 }
 void physics()
 {
+	if ((bx < 0)OR(bx > 216)OR(by < 0)OR(by > 136)) {
+		die();
+	}
     if (gravity == 0) {
         y += 0.24;
     }
@@ -305,7 +311,7 @@ void levels()
 {
     const GBFS_FILE *dat = find_first_gbfs_file(find_first_gbfs_file);
     sprintf(buf, "l%d.lz", level);
-    if(level==138) {
+    if(level==140) {
         hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, "end.lz", 0), (unsigned long)VRAM);
     }
     else {
