@@ -2,7 +2,7 @@ Prerequisites:
 	Windows XP 32/64bit or higher
 	DevKitARM r47
 	gbafix (from DarkFader)
-	Columniser (from gbadev.org)
+	Usenti (from gbadev.org)
 	ImageMagick
 	An image editor (I use RealWorld Paint)
 	A code editor (preferrably MS Visual Studio)
