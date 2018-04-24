@@ -57,7 +57,7 @@ void varreset()
     restart = 0;
 }
 
-int BlockTouchingColor(u16* color)
+int BlockTouchingColor(u16 color)
 {
     if ((sbj_GetPixel(bx + 1, by + 24 + y) == color)OR(sbj_GetPixel(bx + 1, by + 22 + y) == color)OR(sbj_GetPixel(bx + 2, by + 24 + y) == color)OR(sbj_GetPixel(bx + 2, by + 23 + y) == color)OR(sbj_GetPixel(bx + 3, by + 24 + y) == color)OR(sbj_GetPixel(bx + 3, by + 23 + y) == color)OR(sbj_GetPixel(bx + 3, by + 22 + y) == color)OR(sbj_GetPixel(bx + 4, by + 24 + y) == color)OR(sbj_GetPixel(bx + 4, by + 23 + y) == color)OR(sbj_GetPixel(bx + 4, by + 22 + y) == color)OR(sbj_GetPixel(bx + 5, by + 24 + y) == color)OR(sbj_GetPixel(bx + 5, by + 23 + y) == color)OR(sbj_GetPixel(bx + 5, by + 22 + y) == color)OR(sbj_GetPixel(bx + 6, by + 24 + y) == color)OR(sbj_GetPixel(bx + 6, by + 23 + y) == color)OR(sbj_GetPixel(bx + 6, by + 22 + y) == color)OR(sbj_GetPixel(bx + 7, by + 24 + y) == color)OR(sbj_GetPixel(bx + 7, by + 23 + y) == color)OR(sbj_GetPixel(bx + 7, by + 22 + y) == color)OR(sbj_GetPixel(bx + 8, by + 24 + y) == color)OR(sbj_GetPixel(bx + 8, by + 23 + y) == color)OR(sbj_GetPixel(bx + 8, by + 22 + y) == color)OR(sbj_GetPixel(bx + 9, by + 24 + y) == color)OR(sbj_GetPixel(bx + 9, by + 23 + y) == color)OR(sbj_GetPixel(bx + 9, by + 22 + y) == color)OR(sbj_GetPixel(bx + 10, by + 24 + y) == color)OR(sbj_GetPixel(bx + 10, by + 23 + y) == color)OR(sbj_GetPixel(bx + 10, by + 22 + y) == color)OR(sbj_GetPixel(bx + 11, by + 24 + y) == color)OR(sbj_GetPixel(bx + 12, by + 23 + y) == color)OR(sbj_GetPixel(bx + 12, by + 22 + y) == color)OR(sbj_GetPixel(bx + 13, by + 24 + y) == color)OR(sbj_GetPixel(bx + 13, by + 23 + y) == color)OR(sbj_GetPixel(bx + 13, by + 22 + y) == color)OR(sbj_GetPixel(bx + 14, by + 24 + y) == color)OR(sbj_GetPixel(bx + 14, by + 23 + y) == color)OR(sbj_GetPixel(bx + 14, by + 22 + y) == color)OR(sbj_GetPixel(bx + 15, by + 24 + y) == color)OR(sbj_GetPixel(bx + 16, by + 23 + y) == color)OR(sbj_GetPixel(bx + 17, by + 22 + y) == color)OR(sbj_GetPixel(bx + 18, by + 24 + y) == color)OR(sbj_GetPixel(bx + 19, by + 23 + y) == color)OR(sbj_GetPixel(bx + 20, by + 22 + y) == color)) {
         return 1;
@@ -81,7 +81,7 @@ void bottomcol()
     if ((sbj_GetPixel(bx + 1, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 1, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 2, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 2, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 3, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 3, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 3, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 4, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 4, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 4, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 5, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 5, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 5, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 6, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 6, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 6, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 7, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 7, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 7, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 8, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 8, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 8, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 9, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 9, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 9, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 10, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 10, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 10, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 11, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 12, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 12, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 13, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 13, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 13, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 14, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 14, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 14, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 15, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 16, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 17, by + 22 + y) == 0x64c0)OR(sbj_GetPixel(bx + 18, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 19, by + 23 + y) == 0x64c0)OR(sbj_GetPixel(bx + 20, by + 22 + y) == 0x64c0)OR((sbj_GetPixel(bx, by + 24) == 0x64c0))OR(sbj_GetPixel(bx + 24, by + 24) == 0x64c0)OR(sbj_GetPixel(bx + 22, by + 24 + y) == 0x64c0)OR(sbj_GetPixel(bx + 21, by + 23 + y) == 0x64c0)) {
         by -= 1;
         y = 0;
-        if ((keyDown(KEY_A))AND(gravity == 0)) {
+        if ((keyDown(KEY_A))AND(gravity == 0)AND(alock==0)) {
             mm_sound_effect jmp = {
                 { SFX_JUMP },			// id
                 (int)(1.0f * (1 << 10)),	// rate
@@ -90,9 +90,11 @@ void bottomcol()
                 0,	// panning
             };
             mm_sfxhand jump = 0;
+			mmEffectCancel(jump);
             jump = mmEffectEx(&jmp);
             y = -4.05;
             jumps++;
+			alock = 1;
         }
     }
 }
@@ -100,7 +102,7 @@ void bottomcol()
 void rightcol()
 {
     if ((sbj_GetPixel(bx + 24 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 1) == 0x64c0)) {
-        if (keyDown(KEY_A)) {
+        if (keyDown(KEY_A)AND(alock == 0)) {
 			mm_sound_effect jmp = {
 				{ SFX_JUMP },			// id
 				(int)(1.0f * (1 << 10)),	// rate
@@ -117,7 +119,8 @@ void rightcol()
                 y = 4.05;
             }
             x = -5;
-            jumps++;
+			jumps++;
+			alock = 1;
         }
         else {
             x = 0;
@@ -129,7 +132,8 @@ void rightcol()
 void leftcol()
 {
     if ((sbj_GetPixel(bx + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 1) == 0x64c0)) {
-        if (keyDown(KEY_A)) {
+        if (keyDown(KEY_A)AND(alock == 0)) {
+			alock = 1;
 			mm_sound_effect jmp = {
 				{ SFX_JUMP },			// id
 				(int)(1.0f * (1 << 10)),	// rate
@@ -195,7 +199,8 @@ void topcol()
                     }
                 }
             }
-            if (keyDown(KEY_A)) {
+            if (keyDown(KEY_A)AND(alock == 0)) {
+				alock = 1;
 				mm_sound_effect jmp = {
 					{ SFX_JUMP },			// id
 					(int)(1.0f * (1 << 10)),	// rate
@@ -310,14 +315,14 @@ void physics()
 void levels()
 {
     const GBFS_FILE *dat = find_first_gbfs_file(find_first_gbfs_file);
-    sprintf(buf, "l%d.lz", level);
-    if(level==140) {
+    sprintf((char*)buf, "l%d.lz", level);
+    if(level==LEVEL_MAX) {
         hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, "end.lz", 0), (unsigned long)VRAM);
     }
     else {
         hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, (char*)buf, 0), (unsigned long)VRAM);
     }
-	if (pause == 0)
+	if (pause2 == 0)
 	{
 		if (rand1 == 1)
 		{
@@ -361,4 +366,65 @@ void setbg2novb(u16* image, u16* pal)
     hrt_offsetBGPal = 0;
     REG_DMA3DAD = (unsigned long)VRAM;
     REG_DMA3CNT = 0x80000000 | 120 * 160;
+}
+
+void goalanim()
+{
+	if (frames % 6)
+	{
+		gi++;
+		if (gi == 0)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+		}
+		if (gi == 1)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 130); //Goal Pos
+		}
+		if (gi == 2)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 132); //Goal Pos
+		}
+		if (gi == 3)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 134); //Goal Pos
+		}
+		if (gi == 4)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 132); //Goal Pos
+		}
+		if (gi == 5)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 130); //Goal Pos
+		}
+		if (gi == 6)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+		}
+		if (gi == 7)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 126); //Goal Pos
+		}
+		if (gi == 8)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 124); //Goal Pos
+		}
+		if (gi == 9)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 122); //Goal Pos
+		}
+		if (gi == 10)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 124); //Goal Pos
+		}
+		if (gi == 11)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 126); //Goal Pos
+		}
+		if (gi == 12)
+		{
+			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+			gi = 0;
+		}
+	}
 }

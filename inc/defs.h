@@ -1,11 +1,11 @@
 //variables
-int bx = 17, by = 128, px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time2, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, pause, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, unreadchieves, wait, temp, studentchieve, parkourchieve, captainchieve, deathchieve, jumpchieve, cryptchieve, harpchieve, gdashchieve, burnchieve, mazechieve, gemchieve, pongchieve, portalchieve, monsterchieve, jumps, pookachieve, creepdeaths;
-u8 saveone, savetwo, savethree, crash;
+int bx = 17, by = 128, px, py, psx, psy, pi, gci, fl, es, arpos, newframe, devmode, g2, gcd2, fl2, lv2, ea2, musici, deaths, time2, musicsize, s1o, s2o, s3o, s4o, s5o, s6o, px, py, pdy, pdx, gemv, end, empty, empty2, arpos, why, jumpt, sndtmr, deatht, dir, boi, start, g, nostart, level, menu, pause2, hit, charactercollision, ex, ea, ed, em, gm, tm, td, td2, ty, ty2, sm, sy, sd, fezaud, gcd, alock, block, sellock, RNGSeed, realrng, RNGRSeed, h1, dum, gravity, restart, fx, fy, fb, trans, i, current, complete3, unreadchieves, wait, temp, studentchieve, parkourchieve, captainchieve, deathchieve, jumpchieve, cryptchieve, harpchieve, gdashchieve, burnchieve, mazechieve, gemchieve, pongchieve, portalchieve, monsterchieve, jumps, pookachieve, creepdeaths, frames;
+u8 saveone, savetwo, savethree, crash, gy, gi;
 u8 wipe;
 u8 rand1;
 u8 deathstate, deathframe;
-int levelmax = 138;
-char* buf[255];
+int levelmax = 146;
+char buf[255];
 char *hello;
 double x, y;
 unsigned char r, g3, b;
@@ -130,3 +130,5 @@ extern const unsigned short shrink7Tiles[];
 extern const unsigned short shrink8Tiles[];
 extern const unsigned short shrink9Tiles[];
 extern const unsigned short shrinkaTiles[];
+
+#define LEVEL_MAX 146

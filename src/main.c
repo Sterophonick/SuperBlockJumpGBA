@@ -1,13 +1,15 @@
 // Main source file for Super Block Jump - Game Boy Advance Edition. Feel free to edit and recompile the source if you want. If you are to recompile the game, You will need DevKitARM and HeartLib installed.
 void vblfunc();
 #include <libheart.h> //main function library (that I made)
-u16* ExtWRAM = (u16*)0x02000000;
+u8* ExtWRAM = (u8*)0x02000000;
 extern const u8 soundbank_bin_end[];
 extern const u8 soundbank_bin[];
 extern const u32 soundbank_bin_size;
 #include "..\inc\defs.h" //external definitions, variables
 #include "..\inc\soundbank.h"
 #include "..\inc\more.h" //other functions
+
+hrt_SOFTRESETCODE
 
 #define startpressed keyDown(KEY_START)
 #define selectpressed keyDown(KEY_SELECT)
@@ -44,7 +46,7 @@ SRAM Slots:
 
 int main()   //Entry Point
 {
-    hrt_Init(0);
+    hrt_Init(1);
     mmInitDefault((mm_addr)soundbank_bin, 8);
     REG_SOUNDCNT_H = 0x330E;
     mm_sound_effect logotheme = {
@@ -205,7 +207,7 @@ int main()   //Entry Point
                 } //waits until a or b is not pressed
                 hrt_FillScreen(3, 0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
-                hrt_Memcpy(SRAM, 0x02000000, 65536); //clears SRAM
+                hrt_Memcpy(SRAM, 0x02000100, 0xFFFF); //clears SRAM
                 hrt_SleepF(240); //Sleeps for 4 seconds
                 hrt_PrintOnBitmap(-1, 0, "THE SYSTEM WILL NOW RESTART."); //draw text
                 while (!(KEY_ANY_PRESSED)) {
@@ -309,7 +311,6 @@ int main()   //Entry Point
 	savethree = hrt_LoadByte(0xb); //Save Three
 	rand1 = hrt_LoadByte(0x60);
     hello = "//cart//data//allobjs.h: no newline at end of file       C:\\devkitadv\\bin\\objcopy -O binary main.elf main.gba       C:\\devkitadv\\bin\\gcc -marm -mthumb-interwork -o main.elf main.o      C:\\devkitadv\\bin\\gcc -c -O3 -mthumb-interwork main.c Hello. You have just found an eAsTeR eGg.";
-    int s;
     if (empty2 == 0) {
         hrt_VblankIntrWait();
         hrt_SetDSPMode(3, //Mode
@@ -406,7 +407,7 @@ int main()   //Entry Point
     time2 = 0; //time2r for credits
     while (!(time2 == 255 | keyDown(KEY_A))) {
         time2++;
-        hrt_SetBGPalEntry(2, (void*)hrt_GetBGPalEntry(2) + 3); //Color Changing text
+        hrt_SetBGPalEntry(2, hrt_GetBGPalEntry(2) + 3); //Color Changing text
         hrt_SleepF(1); //Waits one frame
     }
     for (i = 0; i < 17; i++) {
@@ -420,7 +421,7 @@ int main()   //Entry Point
         hrt_SleepF(1);
     }
     time2 = 0; //time2r
-    while (!(time2 == 255| keyDown(KEY_A))) {
+    while (!((time2 == 255) | (keyDown(KEY_A)))) {
         time2++; //time2r
         hrt_SleepF(1); //waits on frame
     }
@@ -435,7 +436,7 @@ int main()   //Entry Point
         hrt_SleepF(1);
     }
     time2 = 0; //time2r
-    while (!(time2 == 255 | keyDown(KEY_A))) {
+    while (!((time2 == 255) | (keyDown(KEY_A)))) {
         time2++; //time2r
         hrt_SleepF(1); //waits one frame
     }
@@ -450,7 +451,7 @@ int main()   //Entry Point
         hrt_SleepF(1);
     }
     time2 = 0;
-    while (!(time2 == 255 | keyDown(KEY_A))) {
+    while (!((time2 == 255) | (keyDown(KEY_A)))) {
         time2++;
         hrt_SleepF(1);
     }
@@ -465,7 +466,7 @@ int main()   //Entry Point
         hrt_SleepF(1);
     }
     time2 = 0;
-    while (!(time2 == 255 | keyDown(KEY_A))) {
+    while (!((time2 == 255) | (keyDown(KEY_A)))) {
         time2++;
         hrt_SleepF(1);
     }
@@ -480,7 +481,7 @@ int main()   //Entry Point
         hrt_SleepF(1);
     }
     time2 = 0;
-    while (!(time2 == 255 | keyDown(KEY_A))) {
+    while (!((time2 == 255) | (keyDown(KEY_A)))) {
         time2++;
         hrt_SleepF(1);
     }
@@ -622,7 +623,6 @@ int main()   //Entry Point
     setbg2novb((void*)bgtwoBitmap, (void*)bgtwoPalette);
     hrt_SleepF(15);
     while (1) { //main loop for menu
-        mmEffectCancel(&punch);
         hrt_VblankIntrWait();
         if (keyDown(KEY_SELECT)) {
             for (i = 0; i < 17; i++) {
@@ -676,9 +676,9 @@ int main()   //Entry Point
             hrt_LoadOBJGFX((void*)sprs, 11904); //loads the bitmap data for all of the objects, so that I don't have to go throught the hassle of making a palette for each individual object.
             hrt_LoadOBJPal((void*)sprsPalette, 255); //Copies the specified palette data into memory address 0x5000200, which is the location of the palette of the objects in OAM.
             level = 1;
-            pause = 1;
+            pause2 = 1;
             levels();
-            pause = 0;
+            pause2 = 0;
             hrt_SetDSPMode(3, //Mode
                            0,								  //CGB Mode
                            0,								  //Frame Select
@@ -810,16 +810,14 @@ int main()   //Entry Point
             while (1) {
                 rand1 = hrt_CreateRNG() % 3;
 				hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
-                hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 10); //Color Changing text
-                hrt_CopyOAM();
-                if ((keyDown(KEY_A))AND(keyDown(KEY_B))AND(keyDown(KEY_L))AND(keyDown(KEY_R))) {
-                    asm volatile("swi 0x00"::);
-                }
+                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 10); //Color Changing text
+				hrt_CopyOAM();
                 hrt_VblankIntrWait();
-                if ((keyDown(KEY_A))AND(keyDown(KEY_B))AND(keyDown(KEY_L))AND(keyDown(KEY_R))) {
-                    asm volatile("swi 0x00"::);
-                }
+				frames++;
+				rand1 = hrt_CreateRNG() % 3;
                 hrt_VblankIntrWait();
+				frames++;
+				goalanim();
                 if (deathstate == 1) {
                     if (!(deathframe == 10)) {
                         deathframe++;
@@ -907,7 +905,7 @@ int main()   //Entry Point
                         }
                     }
                 }
-                else if (BlockTouchingColor((void*)0x7ED3) == 1) {
+                else if (BlockTouchingColor(0x7ED3) == 1) {
                     if (gravity == 1) {
                         tramp = mmEffectEx(&trp);
                         y = 6;
@@ -1087,7 +1085,7 @@ int main()   //Entry Point
                             gemv = 1;
                         }
                     }
-                    if ((bx > 74)AND(by < 94)AND(bx < 141)AND(by > 42)) {
+                    if ((bx > 74)AND(by < 94)AND(bx < LEVEL_MAX )AND(by > 42)) {
                         hrt_CreateOBJ(5,   //Sprite ID
                                       240,							     //Start X
                                       160,							     //Start Y
@@ -1187,7 +1185,7 @@ int main()   //Entry Point
                                   0,								 //Priority
                                   360);							 //Offset
                 }
-                else if (((level >= 43)AND(level <= 47))OR(level == 140)OR(level==127)) {
+                else if (((level >= 43)AND(level <= 47))OR(level == LEVEL_MAX)OR(level==127)) {
                     if ((keyDown(KEY_SELECT))AND(sellock == 0)) {
                         gravity++;
                         if (gravity == 2) {
@@ -1455,7 +1453,7 @@ int main()   //Entry Point
                         }
                     }
                 }
-                if ((keyDown(KEY_B))AND(g == 1)) {
+                if ((keyDown(KEY_B))AND(g == 1)AND(block == 0)) {
                     fb = 1;
                     fy = by + 4;
                     fx = bx;
@@ -1726,7 +1724,13 @@ int main()   //Entry Point
                     achievement(3);
                     deathchieve=1;
                 }
-                if (level == 140) { //////////////////////////////////////////////////////////////////////////////////////////////////////////
+				if (NOT(keyDown(KEY_A))) {
+					alock = 0;
+				}
+				if (NOT(keyDown(KEY_B))) {
+					block = 0;
+				}
+                if (level == LEVEL_MAX) { //////////////////////////////////////////////////////////////////////////////////////////////////////////
                     if ((by < 45)AND(bx > 130)AND(bx < 149)) {
                         if (gravity == 1) {
                             hrt_VblankIntrWait();
@@ -1745,7 +1749,7 @@ int main()   //Entry Point
                                            0,                               //Win 0
                                            0,                               //Win 1
                                            0);							  //OBJWin
-                            mmEffectCancel(&bgm);
+                            mmEffectCancel(music);
                             mmStop();
                             mmEffectCancel(music);
                             bzz = mmEffectEx(&buzz);
@@ -1769,8 +1773,8 @@ int main()   //Entry Point
                         }
                     }
                 }
-                if(level>140) {
-                    level=140;
+                if(level>LEVEL_MAX) {
+                    level=LEVEL_MAX;
                 }
                 if((jumpchieve==0)AND(jumps==100)) {
                     achievement(4);
@@ -1783,7 +1787,6 @@ int main()   //Entry Point
                     hrt_SetOBJXY(&sprites[50], 240, 160);
                 }
                 if (keyDown(KEY_START)) {
-                    mmEffectCancel(&bgm);
                     mmStop();
                     mmEffectCancel(music);
                     mmEffectCancel(portal);
@@ -1793,8 +1796,8 @@ int main()   //Entry Point
                     s4o = sprites[4].attribute2;
                     s5o = sprites[5].attribute2;
                     s6o = sprites[6].attribute2;
-                    pause = 1;
-                    while (pause == 1) {
+                    pause2 = 1;
+                    while (pause2 == 1) {
                         hrt_VblankIntrWait();
                         hrt_SetDSPMode(4, //Mode
                                        0,								  //CGB Mode
@@ -1851,7 +1854,7 @@ int main()   //Entry Point
                         hrt_CopyOAM();
                         while (!(keyDown(KEY_B))) {
                             hrt_VblankIntrWait();
-                            hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 5); //Color Changing text
+                            hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
                             if(keyDown(KEY_DOWN)) {
                                 hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
                                 for (i = 0; i < 17; i++) {
@@ -2290,7 +2293,7 @@ int main()   //Entry Point
                                 i++;
                                 hrt_SetOBJXY(&sprites[i], 240, 160);
                                 hrt_CopyOAM();
-                                pause = 0; //Exits Pause
+                                pause2 = 0; //Exits Pause
                                 hrt_SetDSPMode(4, //Mode
                                                0,								  //CGB Mode
                                                0,								  //Frame Select
@@ -2361,9 +2364,9 @@ int main()   //Entry Point
                                     hrt_SetFXLevel(i);
                                     hrt_SleepF(1);
                                 }
-                                pause = 1;
+                                pause2 = 1;
                                 levels();
-                                pause = 0;
+                                pause2 = 0;
                                 if (level == 103) {
                                     if (fl == 1) {
                                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.img.lz", NULL), (u32)VRAM);
@@ -2374,7 +2377,7 @@ int main()   //Entry Point
                                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l85b.lz", NULL), (u32)VRAM);
                                     }
                                 }
-                                else if (level == 140) {
+                                else if (level == LEVEL_MAX) {
                                     if (end == 1) {
                                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
                                     }
@@ -2480,7 +2483,7 @@ int main()   //Entry Point
                                                0);							  //OBJWin
                                 while (!(keyDown(KEY_B))) { // B pressed
                                     hrt_VblankIntrWait();
-                                    hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 5); //Color Changing text
+                                    hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
                                     if (keyDown(KEY_LEFT)) { //Arrow Positions
                                         while (keyDown(KEY_LEFT));
                                         arpos--;
@@ -2529,7 +2532,7 @@ int main()   //Entry Point
                                                            0);							  //OBJWin
                                             while (!(keyDown(KEY_B))) {
                                                 hrt_VblankIntrWait();
-                                                hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 5); //Color Changing text
+                                                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
                                                 if (keyDown(KEY_UP)) {
                                                     while (keyDown(KEY_UP));
                                                     arpos--;
@@ -2732,7 +2735,7 @@ int main()   //Entry Point
                                                            0);							  //OBJWin
                                             while (!(keyDown(KEY_B))) {
                                                 hrt_VblankIntrWait();
-                                                hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 5); //Color Changing text
+                                                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
                                                 if (keyDown(KEY_UP)) {
                                                     while (keyDown(KEY_UP));
                                                     arpos--;
@@ -2970,7 +2973,7 @@ int main()   //Entry Point
                                         hrt_SetOBJXY(&sprites[5], 173, 112);
                                         if (keyDown(KEY_A)) {
                                             hrt_VblankIntrWait();
-                                            hrt_SetOBJPalEntry(181, (void*)hrt_GetOBJPalEntry(181) + 5); //Color Changing text
+                                            hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
                                             arpos = 0;
                                             hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
                                             for (i = 0; i < 17; i++) {
@@ -3019,8 +3022,8 @@ int main()   //Entry Point
                                                     hrt_SetOBJXY(&sprites[5], 25, 32);
                                                     if (keyDown(KEY_A)) {
                                                         for (i = 0; i != 16; i++) {
-                                                            hrt_Memcpy(SRAM + 0x01, 0x06000ED0, 5);
-                                                            hrt_Memcpy(SRAM + 0x10, 0x06000ED0, 20);
+                                                            hrt_Memcpy(&SaveData[0x01], 0x02000100+0xffff, 5);
+                                                            hrt_Memcpy(&SaveData[0x10], 0x02000100 + 0xffff, 20);
                                                         }
                                                     }
                                                 }
@@ -3028,16 +3031,16 @@ int main()   //Entry Point
                                                     hrt_SetOBJXY(&sprites[5], 25, 45);
                                                     if (keyDown(KEY_A)) {
                                                         for (i = 0; i != 16; i++) {
-                                                            hrt_Memcpy(SRAM + 0x06, 0x06000ED0, 5);
-                                                            hrt_Memcpy(SRAM + 0x24, 0x06000ED0, 20);
+                                                            hrt_Memcpy(&SaveData[0x06], 0x02000100, 5);
+                                                            hrt_Memcpy(&SaveData[0x24], 0x02000100, 20);
                                                         }
                                                     }
                                                 }
                                                 if (arpos == 2) {
                                                     hrt_SetOBJXY(&sprites[5], 25, 58);
                                                     if (keyDown(KEY_A)) {
-                                                        hrt_Memcpy(SRAM + 0x0B, 0x06000ED0, 5);
-                                                        hrt_Memcpy(SRAM + 0x38, 0x06000ED0, 20);
+                                                        hrt_Memcpy(&SaveData[0x0B], 0x02000100, 5);
+                                                        hrt_Memcpy(&SaveData[0x38], 0x02000100, 20);
                                                     }
                                                 }
                                                 hrt_CopyOAM(); //Copies OBJ Attrib
@@ -3173,9 +3176,9 @@ int main()   //Entry Point
                             hrt_SetFXLevel(i);
                             hrt_SleepF(1);
                         }
-                        pause = 1;
+                        pause2 = 1;
                         levels();
-                        pause = 0; //Exits Pause
+                        pause2 = 0; //Exits Pause
                         if (level == 103) {
                             if (fl == 1) {
                                 hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.img.lz", NULL), (u32)VRAM);
@@ -3186,7 +3189,7 @@ int main()   //Entry Point
                                 hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l85b.lz", NULL), (u32)VRAM);
                             }
                         }
-                        else if (level == 140) {
+                        else if (level == LEVEL_MAX) {
                             if (end == 1) {
                                 hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
                             }
@@ -3223,4 +3226,12 @@ int main()   //Entry Point
         }
     }
     return 0;
+}
+
+void vblfunc()
+{
+	mmFrame();
+	if ((keyDown(KEY_A))AND(keyDown(KEY_B))AND(keyDown(KEY_SELECT))AND(keyDown(KEY_START))) {
+		asm volatile("swi 0x00"::);
+	}
 }
