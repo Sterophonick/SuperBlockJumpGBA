@@ -1,3 +1,4 @@
+extern int hrt_offsetOAMData;
 u16 sbj_GetPixel(u8 x, u8 y)
 {
     return VRAM[y * 240 + x]; //returns the pixel color at the position given
@@ -18,6 +19,107 @@ void achievement(int id)
 {
 	if (achdata[id] == 0)
 	{
+		achii = 0;
+		if (id == 0)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach00Tiles, 1024);
+		}
+		if (id == 1)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach01Tiles, 1024);
+		}
+		if (id == 2)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach02Tiles, 1024);
+		}
+		if (id == 3)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach03Tiles, 1024);
+		}
+		if (id == 4)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach04Tiles, 1024);
+		}
+		if (id == 5)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach05Tiles, 1024);
+		}
+		if (id == 6)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach06Tiles, 1024);
+		}
+		if (id == 7)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach07Tiles, 1024);
+		}
+		if (id == 8)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach08Tiles, 1024);
+		}
+		if (id == 9)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach09Tiles, 1024);
+		}
+		if (id == 0x0a)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0aTiles, 1024);
+		}
+		if (id == 0x0b)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0bTiles, 1024);
+		}
+		if (id == 0x0c)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0cTiles, 1024);
+		}
+		if (id == 0x0d)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0dTiles, 1024);
+		}
+		if (id == 0x0e)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0eTiles, 1024);
+		}
+		if (id == 0x0f)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach0fTiles, 1024);
+		}
+		if (id == 0x10)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach10Tiles, 1024);
+		}
+		if (id == 0x11)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach11Tiles, 1024);
+		}
+		if (id == 0x12)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach12Tiles, 1024);
+		}
+		if (id == 0x13)
+		{
+			hrt_offsetOAMData = 1920;
+			hrt_LoadOBJGFX((void*)ach13Tiles, 1024);
+		}
 		achdata[id] = 1;
 		hrt_SetOBJXY(&sprites[50], 232, 152);
 		unreadchieves = 1;
@@ -45,6 +147,8 @@ void achievement(int id)
 			mm_sfxhand achi = 0;
 			achi = mmEffectEx(&ach);
 		}
+		achiframe = 0;
+		achiup = 1;
 	}
 }
 void varreset()
@@ -281,32 +385,47 @@ void physics()
         }
         levels();
         varreset();
-        musici+=8;
         if(level==2) {
             achievement(17);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==8) {
             achievement(0);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==19) {
             if(creepdeaths==0) {
                 achievement(14);
+				achiframe = 0;
+				achiup = 1;
             }
         }
         if(level==37) {
             achievement(15);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==49) {
             achievement(9);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==52) {
             achievement(19);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==100) {
             achievement(1);
+			achiframe = 0;
+			achiup = 1;
         }
         if(level==134) {
             achievement(13);
+			achiframe = 0;
+			achiup = 1;
         }
     }
 }
@@ -354,7 +473,7 @@ void setbg2(u16* image, u16* pal)
     hrt_VblankIntrWait();
     REG_DMA3SAD = (unsigned long)image;
     hrt_LoadBGPal(pal, 255);
-    hrt_offsetBGPal = 0;
+	hrt_ResetOffset(3);
     REG_DMA3DAD = (unsigned long)VRAM;
     REG_DMA3CNT = 0x80000000 | 120 * 160;
 }
@@ -363,7 +482,7 @@ void setbg2novb(u16* image, u16* pal)
 {
     REG_DMA3SAD = (unsigned long)image;
     hrt_LoadBGPal(pal, 255);
-    hrt_offsetBGPal = 0;
+	hrt_ResetOffset(3);
     REG_DMA3DAD = (unsigned long)VRAM;
     REG_DMA3CNT = 0x80000000 | 120 * 160;
 }

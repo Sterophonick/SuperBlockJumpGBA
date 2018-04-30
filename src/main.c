@@ -1,15 +1,12 @@
 // Main source file for Super Block Jump - Game Boy Advance Edition. Feel free to edit and recompile the source if you want. If you are to recompile the game, You will need DevKitARM and HeartLib installed.
 void vblfunc();
 #include <libheart.h> //main function library (that I made)
-u8* ExtWRAM = (u8*)0x02000000;
 extern const u8 soundbank_bin_end[];
 extern const u8 soundbank_bin[];
 extern const u32 soundbank_bin_size;
 #include "..\inc\defs.h" //external definitions, variables
 #include "..\inc\soundbank.h"
 #include "..\inc\more.h" //other functions
-
-hrt_SOFTRESETCODE
 
 #define startpressed keyDown(KEY_START)
 #define selectpressed keyDown(KEY_SELECT)
@@ -46,6 +43,7 @@ SRAM Slots:
 
 int main()   //Entry Point
 {
+	hrt_EnableSoftReset();
     hrt_Init(1);
     mmInitDefault((mm_addr)soundbank_bin, 8);
     REG_SOUNDCNT_H = 0x330E;
@@ -673,8 +671,8 @@ int main()   //Entry Point
                 hrt_SetFXLevel(i);
                 hrt_SleepF(8);
             }
-            hrt_LoadOBJGFX((void*)sprs, 11904); //loads the bitmap data for all of the objects, so that I don't have to go throught the hassle of making a palette for each individual object.
-            hrt_LoadOBJPal((void*)sprsPalette, 255); //Copies the specified palette data into memory address 0x5000200, which is the location of the palette of the objects in OAM.
+            hrt_LoadOBJGFX((void*)sprsTiles, 11904); //loads the bitmap data for all of the objects, so that I don't have to go throught the hassle of making a palette for each individual object.
+            hrt_LoadOBJPal((void*)sprsPal, 255); //Copies the specified palette data into memory address 0x5000200, which is the location of the palette of the objects in OAM.
             level = 1;
             pause2 = 1;
             levels();
@@ -808,9 +806,65 @@ int main()   //Entry Point
             hrt_SetOBJXY(&sprites[4], 0, 152);
             hrt_SetOBJXY(&sprites[2], 223, 128);
             while (1) {
+				if (achiup == 1)
+				{
+					if (achii == 0)
+					{
+						achieffa = 0;
+						achii = 0;
+					}
+					achitimer++;
+					hrt_SetFXMode(0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
+					hrt_CreateOBJ(7, 240, 160, 3, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 120);
+					hrt_SetOBJXY(&sprites[7], 0, 0);
+					hrt_CopyOAM();
+					if (achiphase == 0)
+					{
+						if (!(achiframe == 16))
+						{
+							achiframe++;
+							hrt_SetFXAlphaLevel(16-achiframe,             // Source intensity
+								achiframe);
+						}
+						else
+						{
+							achiframe = 0;
+							achiphase = 1;
+							achitimer = 0;
+						}
+					}
+					if (achiphase == 1)
+					{
+						if (achitimer == 90)
+						{
+							achitimer = 0;
+							achiphase = 2;
+							achieffa = 16;
+							achieffb = 0;
+							achiframe = 16;
+						}
+					}
+					if (achiphase == 2)
+					{
+						if (!(achiframe == 0))
+						{
+							achiframe--;
+							hrt_SetFXAlphaLevel(16-achiframe,             // Source intensity
+								achiframe);
+						}
+						else
+						{
+							achiframe = 0;
+							achiphase = 0;
+							achiup = 0;
+							achieffa = 0;
+							achieffb = 16;
+						}
+					}
+				}
                 rand1 = hrt_CreateRNG() % 3;
 				hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
-                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 10); //Color Changing text
+                hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 10); //Color Changing text
 				hrt_CopyOAM();
                 hrt_VblankIntrWait();
 				frames++;
@@ -867,7 +921,7 @@ int main()   //Entry Point
                         bx = 8;
                         by = 108;
                         hrt_ResetOffset(0);
-                        hrt_LoadOBJGFX((void*)sprs, 512);
+                        hrt_LoadOBJGFX((void*)sprsTiles, 512);
                     }
                 }
                 if(deathstate == 0) {
@@ -888,12 +942,16 @@ int main()   //Entry Point
                         if (burnchieve == 0) {
                             burnchieve = 1;
                             achievement(8);
+							achiframe = 0;
+							achiup = 1;
                         }
                     }
                     if (level == 14) {
                         if (pookachieve == 0) {
                             pookachieve = 1;
                             achievement(6);
+							achiframe = 0;
+							achiup = 1;
                             pook = mmEffectEx(&pka);
                         }
                     }
@@ -901,6 +959,8 @@ int main()   //Entry Point
                         if (pookachieve == 0) {
                             pookachieve = 1;
                             achievement(6);
+							achiframe = 0;
+							achiup = 1;
                             pook = mmEffectEx(&pka);
                         }
                     }
@@ -1105,6 +1165,8 @@ int main()   //Entry Point
                         gemv = 1;
                         if(gemchieve==0) {
                             achievement(11);
+							achiframe = 0;
+							achiup = 1;
                             gemchieve=1;
                         }
                     }
@@ -1164,6 +1226,8 @@ int main()   //Entry Point
                         hrt_SetOBJXY(&sprites[5], 240, 160);
                         if(monsterchieve==0) {
                             achievement(10);
+							achiframe = 0;
+							achiup = 1;
                             monsterchieve=1;
                         }
                     }
@@ -1198,6 +1262,8 @@ int main()   //Entry Point
                     }
                     if(captainchieve==0) {
                         achievement(2);
+						achiframe = 0;
+						achiup = 1;
                         captainchieve=1;
                     }
                 }
@@ -1232,6 +1298,8 @@ int main()   //Entry Point
                             y = -4.05;
                             if(gdashchieve == 0) {
                                 achievement(7);
+								achiframe = 0;
+								achiup = 1;
                                 gdashchieve = 1;
                             }
                         }
@@ -1259,6 +1327,8 @@ int main()   //Entry Point
                         portal = mmEffectEx(&prt);
                         if(portalchieve==0) {
                             achievement(16);
+							achiframe = 0;
+							achiup = 1;
                             portalchieve=1;
                         }
                         if (level == 32) {
@@ -1316,7 +1386,6 @@ int main()   //Entry Point
                             }
                         }
                     }
-                    int gcbt,gcbx,gcby,gctx;
                     if (gci == 0) {
                         hrt_CreateOBJ(5,   //Sprite ID
                                       240,							     //Start X
@@ -1397,7 +1466,7 @@ int main()   //Entry Point
                                       1,							     //Color setting
                                       0,							     //Mode
                                       0,								 //Priority
-                                      120);							 //Offset
+                                      100);							 //Offset
                         pi = 1;
                     }
                     px += psx;
@@ -1425,6 +1494,8 @@ int main()   //Entry Point
                         }
                         if(pongchieve==0) {
                             achievement(12);
+							achiframe = 0;
+							achiup = 1;
                             pongchieve=1;
                         }
                     }
@@ -1468,7 +1539,7 @@ int main()   //Entry Point
                     fb = 0;
                     hrt_SetOBJXY(&sprites[3], 0, 160);
                 }
-                hrt_SetOBJXY(&sprites[1], bx, by);
+				hrt_SetOBJXY(&sprites[1], bx, by);
                 if (level == 103) {
                     if (fl == 0) {
                         hrt_CopyOAM();
@@ -1718,10 +1789,14 @@ int main()   //Entry Point
                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.lz", NULL), (u32)VRAM);
                         fl = 1;
                         achievement(5);
+						achiframe = 0;
+						achiup = 1;
                     }
                 }
                 if((deaths==25)AND(deathchieve==0)) {
                     achievement(3);
+					achiframe = 0;
+					achiup = 1;
                     deathchieve=1;
                 }
 				if (NOT(keyDown(KEY_A))) {
@@ -1769,6 +1844,8 @@ int main()   //Entry Point
                         if (end == 0) {
                             hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
                             achievement(18);
+							achiframe = 0;
+							achiup = 1;
                             end = 1;
                         }
                     }
@@ -1778,6 +1855,8 @@ int main()   //Entry Point
                 }
                 if((jumpchieve==0)AND(jumps==100)) {
                     achievement(4);
+					achiframe = 0;
+					achiup = 1;
                     jumpchieve=1;
                 }
                 if(unreadchieves==1) {
@@ -1797,7 +1876,9 @@ int main()   //Entry Point
                     s5o = sprites[5].attribute2;
                     s6o = sprites[6].attribute2;
                     pause2 = 1;
+					arpos = 0;
                     while (pause2 == 1) {
+						hrt_CreateOBJ(7, 240, 160, 3, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 120);
                         hrt_VblankIntrWait();
                         hrt_SetDSPMode(4, //Mode
                                        0,								  //CGB Mode
@@ -1819,25 +1900,10 @@ int main()   //Entry Point
                         hrt_SetOBJXY(&sprites[2], 240, 160);
                         hrt_SetOBJXY(&sprites[3], 240, 160);
                         hrt_SetOBJXY(&sprites[4], 240, 160);
-                        hrt_CreateOBJ(6,   //Sprite ID
-                                      240,							     //Start X
-                                      160,							     //Start Y
-                                      2,							     //Size
-                                      0,							     //Affine
-                                      0,							     //Horizontal Flip
-                                      0,							     //Vertical Flip
-                                      0,							     //Shape
-                                      0,							     //Double Size
-                                      0,							     //Mosaic
-                                      0,							     //Palette (16-Color only)
-                                      1,							     //Color setting
-                                      0,							     //Mode
-                                      0,								 //Priority
-                                      RESTART_OAM);							 //Offset
                         hrt_CreateOBJ(5,   //Sprite ID
-                                      240,							     //Start X
-                                      160,							     //Start Y
-                                      2,							     //Size
+                                      1,							     //Start X
+                                      16,							     //Start Y
+                                      0,							     //Size
                                       0,							     //Affine
                                       0,							     //Horizontal Flip
                                       0,							     //Vertical Flip
@@ -1848,1208 +1914,1254 @@ int main()   //Entry Point
                                       1,							     //Color setting
                                       0,							     //Mode
                                       0,								 //Priority
-                                      PLAY_OAM);							 //Offset
-                        hrt_SetOBJXY(&sprites[5], 61, 66);
-                        hrt_SetOBJXY(&sprites[6], 121, 66);
+                                      50);							 //Offset
                         hrt_CopyOAM();
-                        while (!(keyDown(KEY_B))) {
+                        while (!((keyDown(KEY_B))OR(unpause == 1))) {
                             hrt_VblankIntrWait();
-                            hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
-                            if(keyDown(KEY_DOWN)) {
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(i);
-                                    hrt_SleepF(1);
-                                }
-                                hrt_SetOBJXY(&sprites[5], 240, 160);
-                                hrt_SetOBJXY(&sprites[6], 240, 160);
-                                unreadchieves = 0;
-                                hrt_SetOBJXY(&sprites[50], 240, 160);
-                                hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.img.lz", NULL), (u32)VRAM);
-                                hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.pal.lz", NULL), (u32)BGPaletteMem);
-                                if(achdata[0] == 1) {
-                                    hrt_CreateOBJ(0,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[0], achdatax[0], achdatay[0]);
-                                }
-                                if(achdata[1] == 1) {
-                                    hrt_CreateOBJ(1,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[1], achdatax[1], achdatay[1]);
-                                }
-                                if(achdata[2] == 1) {
-                                    hrt_CreateOBJ(2,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[2], achdatax[2], achdatay[2]);
-                                }
-                                if(achdata[3] == 1) {
-                                    hrt_CreateOBJ(3,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[3], achdatax[3], achdatay[3]);
-                                }
-                                i=4;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=5;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=6;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=7;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=8;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=9;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=10;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=11;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=12;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=13;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=14;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=15;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=16;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=17;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=18;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                i=19;
-                                if(achdata[i] == 1) {
-                                    hrt_CreateOBJ(i,   //Sprite ID
-                                                  240,							     //Start X
-                                                  160,							     //Start Y
-                                                  0,							     //Size
-                                                  0,							     //Affine
-                                                  0,							     //Horizontal Flip
-                                                  0,							     //Vertical Flip
-                                                  0,							     //Shape
-                                                  0,							     //Double Size
-                                                  0,							     //Mosaic
-                                                  0,							     //Palette (16-Color only)
-                                                  1,							     //Color setting
-                                                  0,							     //Mode
-                                                  0,								 //Priority
-                                                  492);                       //Offset
-                                    hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
-                                }
-                                hrt_CopyOAM();
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(16 - i);
-                                    hrt_SleepF(1);
-                                }
-                                while(!(keyDown(KEY_B))) {
-                                    hrt_VblankIntrWait();
-                                }
-                                i=0;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                i++;
-                                hrt_SetOBJXY(&sprites[i], 240, 160);
-                                hrt_CopyOAM();
-                                pause2 = 0; //Exits Pause
-                                hrt_SetDSPMode(4, //Mode
-                                               0,								  //CGB Mode
-                                               0,								  //Frame Select
-                                               0,                               //Unlocked HBlank
-                                               1,                               //Linear OBJ Tile Mapping
-                                               0,                               //Force Blank
-                                               0,                               //BG 0
-                                               0,                               //BG 1
-                                               0,                               //BG 2
-                                               0,                               //BG 3
-                                               0,                               //OBJ
-                                               0,                               //Win 0
-                                               0,                               //Win 1
-                                               0);							  //OBJWin
-                                hrt_CreateOBJ(4,   //Sprite ID
-                                              240,							     //Start X
-                                              160,							     //Start Y
-                                              3,							     //Size
-                                              0,							     //Affine
-                                              0,							     //Horizontal Flip
-                                              0,							     //Vertical Flip
-                                              1,							     //Shape
-                                              0,							     //Double Size
-                                              0,							     //Mosaic
-                                              0,							     //Palette (16-Color only)
-                                              1,							     //Color setting
-                                              0,							     //Mode
-                                              0,								 //Priority
-                                              280);							 //Offset
-                                hrt_SetOBJXY(&sprites[4], 0, 152); //Version pos
-                                hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
-                                hrt_SetOBJXY(&sprites[5],240,160); //Spr5 Offscreen
-                                hrt_SetOBJXY(&sprites[6], 240,160); //Spr6 Offscreen
-                                hrt_CreateOBJ(3,   //Sprite ID
-                                              240,							     //Start X
-                                              160,							     //Start Y
-                                              2,							     //Size
-                                              0,							     //Affine
-                                              0,							     //Horizontal Flip
-                                              0,							     //Vertical Flip
-                                              1,							     //Shape
-                                              0,							     //Double Size
-                                              0,							     //Mosaic
-                                              0,							     //Palette (16-Color only)
-                                              1,							     //Color setting
-                                              0,							     //Mode
-                                              0,								 //Priority
-                                              32);							 //Offset
-                                hrt_SetOBJXY(&sprites[4], 0, 152);
-                                hrt_CreateOBJ(1,   //Sprite ID
-                                              240,							     //Start X
-                                              160,							     //Start Y
-                                              2,							     //Size
-                                              0,							     //Affine
-                                              0,							     //Horizontal Flip
-                                              0,							     //Vertical Flip
-                                              0,							     //Shape
-                                              0,							     //Double Size
-                                              0,							     //Mosaic
-                                              0,							     //Palette (16-Color only)
-                                              1,							     //Color setting
-                                              0,							     //Mode
-                                              0,								 //Priority
-                                              0);							 //Offset
-                                break;
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(i);
-                                    hrt_SleepF(1);
-                                }
-                                pause2 = 1;
-                                levels();
-                                pause2 = 0;
-                                if (level == 103) {
-                                    if (fl == 1) {
-                                        hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.img.lz", NULL), (u32)VRAM);
-                                    }
-                                }
-                                else if (level == 85) {
-                                    if (gcd == 1) {
-                                        hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l85b.lz", NULL), (u32)VRAM);
-                                    }
-                                }
-                                else if (level == LEVEL_MAX) {
-                                    if (end == 1) {
-                                        hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
-                                    }
-                                }
-                                hrt_CopyOAM();
-                                hrt_SetDSPMode(3, //Mode
-                                               0,								  //CGB Mode
-                                               0,								  //Frame Select
-                                               0,                               //Unlocked HBlank
-                                               1,                               //Linear OBJ Tile Mapping
-                                               0,                               //Force Blank
-                                               0,                               //BG 0
-                                               0,                               //BG 1
-                                               1,                               //BG 2
-                                               0,                               //BG 3
-                                               1,                               //OBJ
-                                               0,                               //Win 0
-                                               0,                               //Win 1
-                                               0);							  //OBJWin
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(16 - i);
-                                    hrt_SleepF(1);
-                                }
-                            }
-                            if (keyDown(KEY_A)) {
-                                if (deathstate == 0) {
-                                    die();
-                                }
-                            }
-                            if (keyDown(KEY_UP)) {
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(i);
-                                    hrt_SleepF(8);
-                                }
-                                hrt_VblankIntrWait(); //WaitForVblank();
-                                hrt_VblankIntrWait();
-                                hrt_VblankIntrWait();
-                                REG_DISPCNT = 0x80; //Force White screen
-                                while (!((startpressed)AND(selectpressed)));//Waits until Sel+Start are pressed
-                                hrt_SetFXLevel(0);
-                                hrt_SetDSPMode(4, //Mode
-                                               0,								  //CGB Mode
-                                               0,								  //Frame Select
-                                               0,                               //Unlocked HBlank
-                                               1,                               //Linear OBJ Tile Mapping
-                                               0,                               //Force Blank
-                                               0,                               //BG 0
-                                               0,                               //BG 1
-                                               1,                               //BG 2
-                                               0,                               //BG 3
-                                               1,                               //OBJ
-                                               0,                               //Win 0
-                                               0,                               //Win 1
-                                               0);							  //OBJWin
-                            }
-                            if ((keyDown(KEY_L))OR(keyDown(KEY_R))) { //Save Management
-                                int arpos; //Arrow Position
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(i);
-                                    hrt_SleepF(1);
-                                }
-                                hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "sramm.img.lz", NULL), (u32)VRAM);
-                                hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "sramm.pal.lz", NULL), (u32)BGPaletteMem);
-                                hrt_CreateOBJ(5,   //Sprite ID
-                                              240,							     //Start X
-                                              160,							     //Start Y
-                                              0,							     //Size
-                                              0,							     //Affine
-                                              0,							     //Horizontal Flip
-                                              0,							     //Vertical Flip
-                                              0,							     //Shape
-                                              0,							     //Double Size
-                                              0,							     //Mosaic
-                                              0,							     //Palette (16-Color only)
-                                              1,							     //Color setting
-                                              0,							     //Mode
-                                              0,								 //Priority
-                                              50);							 //Offset
-                                hrt_SetOBJXY(&sprites[5], 15, 112); //Move Arrow
-                                hrt_SetOBJXY(&sprites[6], 240, 160); //Moves Sprite 6 offscreen
-                                hrt_CopyOAM(); //Copies Object Attributes
-                                hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                for (i = 0; i < 17; i++) {
-                                    hrt_SetFXLevel(16 - i);
-                                    hrt_SleepF(1);
-                                }
-                                hrt_SetDSPMode(4, //Mode
-                                               0,								  //CGB Mode
-                                               0,								  //Frame Select
-                                               0,                               //Unlocked HBlank
-                                               1,                               //Linear OBJ Tile Mapping
-                                               0,                               //Force Blank
-                                               0,                               //BG 0
-                                               0,                               //BG 1
-                                               1,                               //BG 2
-                                               0,                               //BG 3
-                                               1,                               //OBJ
-                                               0,                               //Win 0
-                                               0,                               //Win 1
-                                               0);							  //OBJWin
-                                while (!(keyDown(KEY_B))) { // B pressed
-                                    hrt_VblankIntrWait();
-                                    hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
-                                    if (keyDown(KEY_LEFT)) { //Arrow Positions
-                                        while (keyDown(KEY_LEFT));
-                                        arpos--;
-                                    }
-                                    if (keyDown(KEY_RIGHT)) {
-                                        while (keyDown(KEY_RIGHT));
-                                        arpos++;
-                                    }
-                                    if (arpos < 0) {
-                                        arpos = 0;
-                                    }
-                                    if (arpos > 2) {
-                                        arpos = 2;
-                                    }
-                                    if (arpos == 0) {
-                                        hrt_SetOBJXY(&sprites[5], 15, 112);
-                                        if (keyDown(KEY_A)) {
-                                            arpos = 0;
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.img.lz", NULL), (u32)VRAM);
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.pal.lz", NULL), (u32)BGPaletteMem);
-                                            hrt_SetOBJXY(&sprites[5], 25, 32); //Arrow
-                                            hrt_CopyOAM(); //Copies OBJ Attrib
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(16 - i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_SetDSPMode(4, //Mode
-                                                           0,								  //CGB Mode
-                                                           0,								  //Frame Select
-                                                           0,                               //Unlocked HBlank
-                                                           1,                               //Linear OBJ Tile Mapping
-                                                           0,                               //Force Blank
-                                                           0,                               //BG 0
-                                                           0,                               //BG 1
-                                                           1,                               //BG 2
-                                                           0,                               //BG 3
-                                                           1,                               //OBJ
-                                                           0,                               //Win 0
-                                                           0,                               //Win 1
-                                                           0);							  //OBJWin
-                                            while (!(keyDown(KEY_B))) {
-                                                hrt_VblankIntrWait();
-                                                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
-                                                if (keyDown(KEY_UP)) {
-                                                    while (keyDown(KEY_UP));
-                                                    arpos--;
-                                                }
-                                                if (keyDown(KEY_DOWN)) {
-                                                    while (keyDown(KEY_DOWN));
-                                                    arpos++;
-                                                }
-                                                if (arpos < 0) {
-                                                    arpos = 0;
-                                                }
-                                                if (arpos > 2) {
-                                                    arpos = 2;
-                                                }
-                                                if (arpos == 0) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 32);
-                                                    if (keyDown(KEY_A)) {
-                                                        hrt_SaveByte(0x01, level); //Saves
-                                                        hrt_SaveByte(0x02, g);
-                                                        hrt_SaveByte(0x03, gcd);
-                                                        hrt_SaveByte(0x04, fl);
-                                                        hrt_SaveByte(0x05, ed);
-                                                        i=0;
-                                                        hrt_SaveByte(0x10, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x11, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x12, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x13, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x14, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x15, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x16, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x17, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x18, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x19, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1A, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1B, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1C, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1D, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1E, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x1F, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x20, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x21, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x22, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x23, achdata[i]);
-                                                    }
-                                                }
-                                                if (arpos == 1) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 45);
-                                                    if (keyDown(KEY_A)) {
-                                                        hrt_SaveByte(0x06, level);
-                                                        hrt_SaveByte(0x07, g);
-                                                        hrt_SaveByte(0x08, gcd);
-                                                        hrt_SaveByte(0x09, fl);
-                                                        hrt_SaveByte(0x0A, ed);
-                                                        i=0;
-                                                        hrt_SaveByte(0x24, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x25, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x26, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x27, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x28, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x29, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2A, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2B, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2C, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2D, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2E, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x2F, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x30, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x31, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x32, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x33, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x34, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x35, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x36, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x37, achdata[i]);
-                                                    }
-                                                }
-                                                if (arpos == 2) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 58); //Arrow Position
-                                                    if (keyDown(KEY_A)) {
-                                                        hrt_SaveByte(0x0B, level); //Saves
-                                                        hrt_SaveByte(0x0C, g);
-                                                        hrt_SaveByte(0x0D, gcd);
-                                                        hrt_SaveByte(0x0E, fl);
-                                                        hrt_SaveByte(0x0F, ed);
-                                                        i=0;
-                                                        hrt_SaveByte(0x38, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x39, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3a, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3b, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3c, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3d, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3e, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x3f, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x40, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x41, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x42, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x43, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x44, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x45, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x46, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x47, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x48, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x49, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x4a, achdata[i]);
-                                                        i++;
-                                                        hrt_SaveByte(0x4b, achdata[i]);
-                                                    }
-                                                }
-                                                hrt_CopyOAM(); //COpies OBJ Attrib
-                                            }
-                                        }
-                                    }
-                                    if (arpos == 1) { //Load
-                                        hrt_SetOBJXY(&sprites[5], 94, 112);
-                                        if (keyDown(KEY_A)) {
-                                            arpos = 0;
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.img.lz", NULL), (u32)VRAM);
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.pal.lz", NULL), (u32)BGPaletteMem);
-                                            hrt_SetOBJXY(&sprites[5], 25, 32);
-                                            hrt_CopyOAM();
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(16 - i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_SetDSPMode(4, //Mode
-                                                           0,								  //CGB Mode
-                                                           0,								  //Frame Select
-                                                           0,                               //Unlocked HBlank
-                                                           1,                               //Linear OBJ Tile Mapping
-                                                           0,                               //Force Blank
-                                                           0,                               //BG 0
-                                                           0,                               //BG 1
-                                                           1,                               //BG 2
-                                                           0,                               //BG 3
-                                                           1,                               //OBJ
-                                                           0,                               //Win 0
-                                                           0,                               //Win 1
-                                                           0);							  //OBJWin
-                                            while (!(keyDown(KEY_B))) {
-                                                hrt_VblankIntrWait();
-                                                hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
-                                                if (keyDown(KEY_UP)) {
-                                                    while (keyDown(KEY_UP));
-                                                    arpos--;
-                                                }
-                                                if (keyDown(KEY_DOWN)) {
-                                                    while (keyDown(KEY_DOWN));
-                                                    arpos++;
-                                                }
-                                                if (arpos < 0) {
-                                                    arpos = 0;
-                                                }
-                                                if (arpos > 2) {
-                                                    arpos = 2;
-                                                }
-                                                if (arpos == 0) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 32);
-                                                    if (keyDown(KEY_A)) {
-                                                        g2 = g;
-                                                        gcd2 = gcd;
-                                                        fl2 = fl;
-                                                        lv2 = level;
-                                                        ea2 = ed;
-                                                        level = hrt_LoadByte(0x01);
-                                                        g = hrt_LoadByte(0x02);
-                                                        gcd = hrt_LoadByte(0x03);
-                                                        fl = hrt_LoadByte(0x04);
-                                                        ed = hrt_LoadByte(0x05);
-                                                        if (level == 0) {
-                                                            level = lv2;
-                                                            fl = fl2;
-                                                            gcd = gcd2;
-                                                            g = g2;
-                                                            ed = ea2;
-                                                        }
-                                                        i=0;
-                                                        achdata[i] = hrt_LoadByte(0x10);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x11);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x12);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x13);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x14);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x15);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x16);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x17);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x18);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x19);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1a);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1b);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1c);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1d);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1e);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x1f);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x20);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x21);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x22);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x23);
-                                                        varreset();
-                                                        deathchieve = achdata[3];
-                                                        jumpchieve = achdata[4];
-                                                        pookachieve = achdata[6];
-                                                        gdashchieve = achdata[7];
-                                                        burnchieve = achdata[8];
-                                                        monsterchieve = achdata[10];
-                                                        gemchieve = achdata[11];
-                                                        pongchieve = achdata[12];
-                                                    }
-                                                }
-                                                if (arpos == 1) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 45);
-                                                    if (keyDown(KEY_A)) {
-                                                        g2 = g;
-                                                        gcd2 = gcd;
-                                                        fl2 = fl;
-                                                        lv2 = level;
-                                                        ea2 = ed;
-                                                        level = hrt_LoadByte(0x06);
-                                                        g = hrt_LoadByte(0x07);
-                                                        gcd = hrt_LoadByte(0x08);
-                                                        fl = hrt_LoadByte(0x09);
-                                                        ed = hrt_LoadByte(0x0A);
-                                                        if (level == 0) {
-                                                            level = lv2;
-                                                            fl = fl2;
-                                                            gcd = gcd2;
-                                                            g = g2;
-                                                            ed = ea2;
-                                                        }
-                                                        varreset();
-                                                        i=0;
-                                                        achdata[i] = hrt_LoadByte(0x24);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x25);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x26);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x27);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x28);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x29);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2a);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2b);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2c);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2d);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2e);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x2f);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x30);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x31);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x32);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x33);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x34);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x35);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x36);
-                                                        i++;
-                                                        achdata[i] = hrt_LoadByte(0x37);
-                                                        deathchieve = achdata[3];
-                                                        jumpchieve = achdata[4];
-                                                        pookachieve = achdata[6];
-                                                        gdashchieve = achdata[7];
-                                                        burnchieve = achdata[8];
-                                                        monsterchieve = achdata[10];
-                                                        gemchieve = achdata[11];
-                                                        pongchieve = achdata[12];
-                                                    }
-                                                }
-                                                if (arpos == 2) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 58);
-                                                    if (keyDown(KEY_A)) {
-                                                        g2 = g;
-                                                        gcd2 = gcd;
-                                                        fl2 = fl;
-                                                        lv2 = level;
-                                                        ea2 = ed;
-                                                        level = hrt_LoadByte(0x0B);
-                                                        g = hrt_LoadByte(0x0C);
-                                                        gcd = hrt_LoadByte(0x0D);
-                                                        fl = hrt_LoadByte(0x0E);
-                                                        ed = hrt_LoadByte(0x0F);
-                                                        if (level == 0) {
-                                                            level = lv2;
-                                                            fl = fl2;
-                                                            gcd = gcd2;
-                                                            g = g2;
-                                                            ed = ea2;
-                                                        }
-                                                        if(!(level == 0)) {
-                                                            i=0;
-                                                            achdata[i] = hrt_LoadByte(0x38);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x39);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3a);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3b);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3c);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3d);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3e);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x3f);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x40);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x41);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x42);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x43);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x44);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x45);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x46);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x47);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x48);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x49);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x4a);
-                                                            i++;
-                                                            achdata[i] = hrt_LoadByte(0x4b);
-                                                            deathchieve = achdata[3];
-                                                            jumpchieve = achdata[4];
-                                                            pookachieve = achdata[6];
-                                                            gdashchieve = achdata[7];
-                                                            burnchieve = achdata[8];
-                                                            monsterchieve = achdata[10];
-                                                            gemchieve = achdata[11];
-                                                            pongchieve = achdata[12];
-                                                            varreset();
-                                                        }
-                                                    }
-                                                }
-                                                hrt_CopyOAM();
-                                            }
-                                        }
-                                    }
-                                    if (arpos == 2) { //Erase
-                                        hrt_SetOBJXY(&sprites[5], 173, 112);
-                                        if (keyDown(KEY_A)) {
-                                            hrt_VblankIntrWait();
-                                            hrt_SetOBJPalEntry(181, hrt_GetOBJPalEntry(181) + 5); //Color Changing text
-                                            arpos = 0;
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.img.lz", NULL), (u32)VRAM);
-                                            hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.pal.lz", NULL), (u32)BGPaletteMem);
-                                            hrt_SetOBJXY(&sprites[5], 25, 32);
-                                            hrt_CopyOAM();
-                                            hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
-                                            for (i = 0; i < 17; i++) {
-                                                hrt_SetFXLevel(16-i);
-                                                hrt_SleepF(1);
-                                            }
-                                            hrt_SetDSPMode(4, //Mode
-                                                           0,								  //CGB Mode
-                                                           0,								  //Frame Select
-                                                           0,                               //Unlocked HBlank
-                                                           1,                               //Linear OBJ Tile Mapping
-                                                           0,                               //Force Blank
-                                                           0,                               //BG 0
-                                                           0,                               //BG 1
-                                                           1,                               //BG 2
-                                                           0,                               //BG 3
-                                                           1,                               //OBJ
-                                                           0,                               //Win 0
-                                                           0,                               //Win 1
-                                                           0);							  //OBJWin
-                                            while (!(keyDown(KEY_B))) {
-                                                if (keyDown(KEY_UP)) {
-                                                    while (keyDown(KEY_UP));
-                                                    arpos--;
-                                                }
-                                                if (keyDown(KEY_DOWN)) {
-                                                    while (keyDown(KEY_DOWN));
-                                                    arpos++;
-                                                }
-                                                if (arpos < 0) {
-                                                    arpos = 0;
-                                                }
-                                                if (arpos > 2) {
-                                                    arpos = 2;
-                                                }
-                                                if (arpos == 0) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 32);
-                                                    if (keyDown(KEY_A)) {
-                                                        for (i = 0; i != 16; i++) {
-                                                            hrt_Memcpy(&SaveData[0x01], 0x02000100+0xffff, 5);
-                                                            hrt_Memcpy(&SaveData[0x10], 0x02000100 + 0xffff, 20);
-                                                        }
-                                                    }
-                                                }
-                                                if (arpos == 1) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 45);
-                                                    if (keyDown(KEY_A)) {
-                                                        for (i = 0; i != 16; i++) {
-                                                            hrt_Memcpy(&SaveData[0x06], 0x02000100, 5);
-                                                            hrt_Memcpy(&SaveData[0x24], 0x02000100, 20);
-                                                        }
-                                                    }
-                                                }
-                                                if (arpos == 2) {
-                                                    hrt_SetOBJXY(&sprites[5], 25, 58);
-                                                    if (keyDown(KEY_A)) {
-                                                        hrt_Memcpy(&SaveData[0x0B], 0x02000100, 5);
-                                                        hrt_Memcpy(&SaveData[0x38], 0x02000100, 20);
-                                                    }
-                                                }
-                                                hrt_CopyOAM(); //Copies OBJ Attrib
-                                            }
-                                        }
-                                    }
-                                    hrt_CopyOAM(); //Copies OBJ Attrib
-                                }
-                            }
+                            hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
+							if (keyDown(KEY_UP)) { //Arrow Positions
+								while (keyDown(KEY_UP))
+								{
+									hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5);
+									hrt_VblankIntrWait();
+								}
+								arpos--;
+							}
+							if (keyDown(KEY_DOWN)) { //Arrow Positions
+								while (keyDown(KEY_DOWN))
+								{
+									hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5);
+									hrt_VblankIntrWait();
+								}
+								arpos++;
+							}
+							if (arpos < 0) {
+								arpos = 0;
+							}
+							if (arpos > 4) {
+								arpos = 4;
+							}
+							hrt_CreateOBJ(5,   //Sprite ID
+								1,							     //Start X
+								(13 * arpos) + 16,							     //Start Y
+								0,							     //Size
+								0,							     //Affine
+								0,							     //Horizontal Flip
+								0,							     //Vertical Flip
+								0,							     //Shape
+								0,							     //Double Size
+								0,							     //Mosaic
+								0,							     //Palette (16-Color only)
+								1,							     //Color setting
+								0,							     //Mode
+								0,								 //Priority
+								50);							 //Offset
+							if(keyDown(KEY_A)){
+								if (arpos == 3) {
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(i);
+										hrt_SleepF(1);
+									}
+									hrt_SetOBJXY(&sprites[5], 240, 160);
+									hrt_SetOBJXY(&sprites[6], 240, 160);
+									unreadchieves = 0;
+									hrt_SetOBJXY(&sprites[50], 240, 160);
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.img.lz", NULL), (u32)VRAM);
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.pal.lz", NULL), (u32)BGPaletteMem);
+									if (achdata[0] == 1) {
+										hrt_CreateOBJ(0,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[0], achdatax[0], achdatay[0]);
+									}
+									if (achdata[1] == 1) {
+										hrt_CreateOBJ(1,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[1], achdatax[1], achdatay[1]);
+									}
+									if (achdata[2] == 1) {
+										hrt_CreateOBJ(2,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[2], achdatax[2], achdatay[2]);
+									}
+									if (achdata[3] == 1) {
+										hrt_CreateOBJ(3,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[3], achdatax[3], achdatay[3]);
+									}
+									i = 4;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 5;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 6;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 7;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 8;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 9;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 10;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 11;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 12;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 13;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 14;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 15;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 16;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 17;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 18;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									i = 19;
+									if (achdata[i] == 1) {
+										hrt_CreateOBJ(i,   //Sprite ID
+											240,							     //Start X
+											160,							     //Start Y
+											0,							     //Size
+											0,							     //Affine
+											0,							     //Horizontal Flip
+											0,							     //Vertical Flip
+											0,							     //Shape
+											0,							     //Double Size
+											0,							     //Mosaic
+											0,							     //Palette (16-Color only)
+											1,							     //Color setting
+											0,							     //Mode
+											0,								 //Priority
+											492);                       //Offset
+										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+									}
+									hrt_CopyOAM();
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(16 - i);
+										hrt_SleepF(1);
+									}
+									while (!(keyDown(KEY_B))) {
+										hrt_VblankIntrWait();
+									}
+									i = 0;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									i++;
+									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_CopyOAM();
+									pause2 = 0; //Exits Pause
+									hrt_SetDSPMode(4, //Mode
+										0,								  //CGB Mode
+										0,								  //Frame Select
+										0,                               //Unlocked HBlank
+										1,                               //Linear OBJ Tile Mapping
+										0,                               //Force Blank
+										0,                               //BG 0
+										0,                               //BG 1
+										0,                               //BG 2
+										0,                               //BG 3
+										0,                               //OBJ
+										0,                               //Win 0
+										0,                               //Win 1
+										0);							  //OBJWin
+									hrt_CreateOBJ(4,   //Sprite ID
+										240,							     //Start X
+										160,							     //Start Y
+										3,							     //Size
+										0,							     //Affine
+										0,							     //Horizontal Flip
+										0,							     //Vertical Flip
+										1,							     //Shape
+										0,							     //Double Size
+										0,							     //Mosaic
+										0,							     //Palette (16-Color only)
+										1,							     //Color setting
+										0,							     //Mode
+										0,								 //Priority
+										280);							 //Offset
+									hrt_SetOBJXY(&sprites[4], 0, 152); //Version pos
+									hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+									hrt_SetOBJXY(&sprites[5], 240, 160); //Spr5 Offscreen
+									hrt_SetOBJXY(&sprites[6], 240, 160); //Spr6 Offscreen
+									hrt_CreateOBJ(3,   //Sprite ID
+										240,							     //Start X
+										160,							     //Start Y
+										2,							     //Size
+										0,							     //Affine
+										0,							     //Horizontal Flip
+										0,							     //Vertical Flip
+										1,							     //Shape
+										0,							     //Double Size
+										0,							     //Mosaic
+										0,							     //Palette (16-Color only)
+										1,							     //Color setting
+										0,							     //Mode
+										0,								 //Priority
+										32);							 //Offset
+									hrt_SetOBJXY(&sprites[4], 0, 152);
+									hrt_CreateOBJ(1,   //Sprite ID
+										240,							     //Start X
+										160,							     //Start Y
+										2,							     //Size
+										0,							     //Affine
+										0,							     //Horizontal Flip
+										0,							     //Vertical Flip
+										0,							     //Shape
+										0,							     //Double Size
+										0,							     //Mosaic
+										0,							     //Palette (16-Color only)
+										1,							     //Color setting
+										0,							     //Mode
+										0,								 //Priority
+										0);							 //Offset
+									break;
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(i);
+										hrt_SleepF(1);
+									}
+									pause2 = 1;
+									levels();
+									pause2 = 0;
+									if (level == 103) {
+										if (fl == 1) {
+											hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.img.lz", NULL), (u32)VRAM);
+										}
+									}
+									else if (level == 85) {
+										if (gcd == 1) {
+											hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l85b.lz", NULL), (u32)VRAM);
+										}
+									}
+									else if (level == LEVEL_MAX) {
+										if (end == 1) {
+											hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
+										}
+									}
+									hrt_CopyOAM();
+									hrt_SetDSPMode(3, //Mode
+										0,								  //CGB Mode
+										0,								  //Frame Select
+										0,                               //Unlocked HBlank
+										1,                               //Linear OBJ Tile Mapping
+										0,                               //Force Blank
+										0,                               //BG 0
+										0,                               //BG 1
+										1,                               //BG 2
+										0,                               //BG 3
+										1,                               //OBJ
+										0,                               //Win 0
+										0,                               //Win 1
+										0);							  //OBJWin
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(16 - i);
+										hrt_SleepF(1);
+									}
+								}
+								if (arpos == 1) {
+									if (deathstate == 0) {
+										die();
+									}
+								}
+								if (arpos == 2) {
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pauses.img.lz", NULL), (u32)VRAM);
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pauses.pal.lz", NULL), (u32)BGPaletteMem);
+									while (keyDown(KEY_A));
+									while (!(keyDown(KEY_A)));
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(i);
+										hrt_SleepF(8);
+									}
+									hrt_VblankIntrWait(); //WaitForVblank();
+									hrt_VblankIntrWait();
+									hrt_VblankIntrWait();
+									REG_DISPCNT = 0x80; //Force White screen
+									while (!((startpressed)AND(selectpressed)));//Waits until Sel+Start are pressed
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.img.lz", NULL), (u32)VRAM);
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.pal.lz", NULL), (u32)BGPaletteMem);
+									hrt_SetFXLevel(0);
+									hrt_SetDSPMode(4, //Mode
+										0,								  //CGB Mode
+										0,								  //Frame Select
+										0,                               //Unlocked HBlank
+										1,                               //Linear OBJ Tile Mapping
+										0,                               //Force Blank
+										0,                               //BG 0
+										0,                               //BG 1
+										1,                               //BG 2
+										0,                               //BG 3
+										1,                               //OBJ
+										0,                               //Win 0
+										0,                               //Win 1
+										0);							  //OBJWin
+								}
+								if (arpos == 4) { //Save Management
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(i);
+										hrt_SleepF(1);
+									}
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "sramm.img.lz", NULL), (u32)VRAM);
+									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "sramm.pal.lz", NULL), (u32)BGPaletteMem);
+									hrt_CreateOBJ(5,   //Sprite ID
+										240,							     //Start X
+										160,							     //Start Y
+										0,							     //Size
+										0,							     //Affine
+										0,							     //Horizontal Flip
+										0,							     //Vertical Flip
+										0,							     //Shape
+										0,							     //Double Size
+										0,							     //Mosaic
+										0,							     //Palette (16-Color only)
+										1,							     //Color setting
+										0,							     //Mode
+										0,								 //Priority
+										50);							 //Offset
+									hrt_SetOBJXY(&sprites[5], 15, 112); //Move Arrow
+									hrt_SetOBJXY(&sprites[6], 240, 160); //Moves Sprite 6 offscreen
+									hrt_CopyOAM(); //Copies Object Attributes
+									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+									for (i = 0; i < 17; i++) {
+										hrt_SetFXLevel(16 - i);
+										hrt_SleepF(1);
+									}
+									hrt_SetDSPMode(4, //Mode
+										0,								  //CGB Mode
+										0,								  //Frame Select
+										0,                               //Unlocked HBlank
+										1,                               //Linear OBJ Tile Mapping
+										0,                               //Force Blank
+										0,                               //BG 0
+										0,                               //BG 1
+										1,                               //BG 2
+										0,                               //BG 3
+										1,                               //OBJ
+										0,                               //Win 0
+										0,                               //Win 1
+										0);							  //OBJWin
+									while (!(keyDown(KEY_B))) { // B pressed
+										hrt_VblankIntrWait();
+										hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
+										if (keyDown(KEY_LEFT)) { //Arrow Positions
+											while (keyDown(KEY_LEFT));
+											arpos--;
+										}
+										if (keyDown(KEY_RIGHT)) {
+											while (keyDown(KEY_RIGHT));
+											arpos++;
+										}
+										if (arpos < 0) {
+											arpos = 0;
+										}
+										if (arpos > 2) {
+											arpos = 2;
+										}
+										if (arpos == 0) {
+											hrt_SetOBJXY(&sprites[5], 15, 112);
+											if (keyDown(KEY_A)) {
+												arpos = 0;
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(i);
+													hrt_SleepF(1);
+												}
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.img.lz", NULL), (u32)VRAM);
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.pal.lz", NULL), (u32)BGPaletteMem);
+												hrt_SetOBJXY(&sprites[5], 25, 32); //Arrow
+												hrt_CopyOAM(); //Copies OBJ Attrib
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(16 - i);
+													hrt_SleepF(1);
+												}
+												hrt_SetDSPMode(4, //Mode
+													0,								  //CGB Mode
+													0,								  //Frame Select
+													0,                               //Unlocked HBlank
+													1,                               //Linear OBJ Tile Mapping
+													0,                               //Force Blank
+													0,                               //BG 0
+													0,                               //BG 1
+													1,                               //BG 2
+													0,                               //BG 3
+													1,                               //OBJ
+													0,                               //Win 0
+													0,                               //Win 1
+													0);							  //OBJWin
+												while (!(keyDown(KEY_B))) {
+													hrt_VblankIntrWait();
+													hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
+													if (keyDown(KEY_UP)) {
+														while (keyDown(KEY_UP));
+														arpos--;
+													}
+													if (keyDown(KEY_DOWN)) {
+														while (keyDown(KEY_DOWN));
+														arpos++;
+													}
+													if (arpos < 0) {
+														arpos = 0;
+													}
+													if (arpos > 2) {
+														arpos = 2;
+													}
+													if (arpos == 0) {
+														hrt_SetOBJXY(&sprites[5], 25, 32);
+														if (keyDown(KEY_A)) {
+															hrt_SaveByte(0x01, level); //Saves
+															hrt_SaveByte(0x02, g);
+															hrt_SaveByte(0x03, gcd);
+															hrt_SaveByte(0x04, fl);
+															hrt_SaveByte(0x05, ed);
+															i = 0;
+															hrt_SaveByte(0x10, achdata[i]);
+															i++;
+															hrt_SaveByte(0x11, achdata[i]);
+															i++;
+															hrt_SaveByte(0x12, achdata[i]);
+															i++;
+															hrt_SaveByte(0x13, achdata[i]);
+															i++;
+															hrt_SaveByte(0x14, achdata[i]);
+															i++;
+															hrt_SaveByte(0x15, achdata[i]);
+															i++;
+															hrt_SaveByte(0x16, achdata[i]);
+															i++;
+															hrt_SaveByte(0x17, achdata[i]);
+															i++;
+															hrt_SaveByte(0x18, achdata[i]);
+															i++;
+															hrt_SaveByte(0x19, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1A, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1B, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1C, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1D, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1E, achdata[i]);
+															i++;
+															hrt_SaveByte(0x1F, achdata[i]);
+															i++;
+															hrt_SaveByte(0x20, achdata[i]);
+															i++;
+															hrt_SaveByte(0x21, achdata[i]);
+															i++;
+															hrt_SaveByte(0x22, achdata[i]);
+															i++;
+															hrt_SaveByte(0x23, achdata[i]);
+														}
+													}
+													if (arpos == 1) {
+														hrt_SetOBJXY(&sprites[5], 25, 45);
+														if (keyDown(KEY_A)) {
+															hrt_SaveByte(0x06, level);
+															hrt_SaveByte(0x07, g);
+															hrt_SaveByte(0x08, gcd);
+															hrt_SaveByte(0x09, fl);
+															hrt_SaveByte(0x0A, ed);
+															i = 0;
+															hrt_SaveByte(0x24, achdata[i]);
+															i++;
+															hrt_SaveByte(0x25, achdata[i]);
+															i++;
+															hrt_SaveByte(0x26, achdata[i]);
+															i++;
+															hrt_SaveByte(0x27, achdata[i]);
+															i++;
+															hrt_SaveByte(0x28, achdata[i]);
+															i++;
+															hrt_SaveByte(0x29, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2A, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2B, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2C, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2D, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2E, achdata[i]);
+															i++;
+															hrt_SaveByte(0x2F, achdata[i]);
+															i++;
+															hrt_SaveByte(0x30, achdata[i]);
+															i++;
+															hrt_SaveByte(0x31, achdata[i]);
+															i++;
+															hrt_SaveByte(0x32, achdata[i]);
+															i++;
+															hrt_SaveByte(0x33, achdata[i]);
+															i++;
+															hrt_SaveByte(0x34, achdata[i]);
+															i++;
+															hrt_SaveByte(0x35, achdata[i]);
+															i++;
+															hrt_SaveByte(0x36, achdata[i]);
+															i++;
+															hrt_SaveByte(0x37, achdata[i]);
+														}
+													}
+													if (arpos == 2) {
+														hrt_SetOBJXY(&sprites[5], 25, 58); //Arrow Position
+														if (keyDown(KEY_A)) {
+															hrt_SaveByte(0x0B, level); //Saves
+															hrt_SaveByte(0x0C, g);
+															hrt_SaveByte(0x0D, gcd);
+															hrt_SaveByte(0x0E, fl);
+															hrt_SaveByte(0x0F, ed);
+															i = 0;
+															hrt_SaveByte(0x38, achdata[i]);
+															i++;
+															hrt_SaveByte(0x39, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3a, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3b, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3c, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3d, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3e, achdata[i]);
+															i++;
+															hrt_SaveByte(0x3f, achdata[i]);
+															i++;
+															hrt_SaveByte(0x40, achdata[i]);
+															i++;
+															hrt_SaveByte(0x41, achdata[i]);
+															i++;
+															hrt_SaveByte(0x42, achdata[i]);
+															i++;
+															hrt_SaveByte(0x43, achdata[i]);
+															i++;
+															hrt_SaveByte(0x44, achdata[i]);
+															i++;
+															hrt_SaveByte(0x45, achdata[i]);
+															i++;
+															hrt_SaveByte(0x46, achdata[i]);
+															i++;
+															hrt_SaveByte(0x47, achdata[i]);
+															i++;
+															hrt_SaveByte(0x48, achdata[i]);
+															i++;
+															hrt_SaveByte(0x49, achdata[i]);
+															i++;
+															hrt_SaveByte(0x4a, achdata[i]);
+															i++;
+															hrt_SaveByte(0x4b, achdata[i]);
+														}
+													}
+													hrt_CopyOAM(); //COpies OBJ Attrib
+												}
+											}
+										}
+										if (arpos == 1) { //Load
+											hrt_SetOBJXY(&sprites[5], 94, 112);
+											if (keyDown(KEY_A)) {
+												arpos = 0;
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(i);
+													hrt_SleepF(1);
+												}
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.img.lz", NULL), (u32)VRAM);
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.pal.lz", NULL), (u32)BGPaletteMem);
+												hrt_SetOBJXY(&sprites[5], 25, 32);
+												hrt_CopyOAM();
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(16 - i);
+													hrt_SleepF(1);
+												}
+												hrt_SetDSPMode(4, //Mode
+													0,								  //CGB Mode
+													0,								  //Frame Select
+													0,                               //Unlocked HBlank
+													1,                               //Linear OBJ Tile Mapping
+													0,                               //Force Blank
+													0,                               //BG 0
+													0,                               //BG 1
+													1,                               //BG 2
+													0,                               //BG 3
+													1,                               //OBJ
+													0,                               //Win 0
+													0,                               //Win 1
+													0);							  //OBJWin
+												while (!(keyDown(KEY_B))) {
+													hrt_VblankIntrWait();
+													hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
+													if (keyDown(KEY_UP)) {
+														while (keyDown(KEY_UP));
+														arpos--;
+													}
+													if (keyDown(KEY_DOWN)) {
+														while (keyDown(KEY_DOWN));
+														arpos++;
+													}
+													if (arpos < 0) {
+														arpos = 0;
+													}
+													if (arpos > 2) {
+														arpos = 2;
+													}
+													if (arpos == 0) {
+														hrt_SetOBJXY(&sprites[5], 25, 32);
+														if (keyDown(KEY_A)) {
+															g2 = g;
+															gcd2 = gcd;
+															fl2 = fl;
+															lv2 = level;
+															ea2 = ed;
+															level = hrt_LoadByte(0x01);
+															g = hrt_LoadByte(0x02);
+															gcd = hrt_LoadByte(0x03);
+															fl = hrt_LoadByte(0x04);
+															ed = hrt_LoadByte(0x05);
+															if (level == 0) {
+																level = lv2;
+																fl = fl2;
+																gcd = gcd2;
+																g = g2;
+																ed = ea2;
+															}
+															i = 0;
+															achdata[i] = hrt_LoadByte(0x10);
+															i++;
+															achdata[i] = hrt_LoadByte(0x11);
+															i++;
+															achdata[i] = hrt_LoadByte(0x12);
+															i++;
+															achdata[i] = hrt_LoadByte(0x13);
+															i++;
+															achdata[i] = hrt_LoadByte(0x14);
+															i++;
+															achdata[i] = hrt_LoadByte(0x15);
+															i++;
+															achdata[i] = hrt_LoadByte(0x16);
+															i++;
+															achdata[i] = hrt_LoadByte(0x17);
+															i++;
+															achdata[i] = hrt_LoadByte(0x18);
+															i++;
+															achdata[i] = hrt_LoadByte(0x19);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1a);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1b);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1c);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1d);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1e);
+															i++;
+															achdata[i] = hrt_LoadByte(0x1f);
+															i++;
+															achdata[i] = hrt_LoadByte(0x20);
+															i++;
+															achdata[i] = hrt_LoadByte(0x21);
+															i++;
+															achdata[i] = hrt_LoadByte(0x22);
+															i++;
+															achdata[i] = hrt_LoadByte(0x23);
+															varreset();
+															deathchieve = achdata[3];
+															jumpchieve = achdata[4];
+															pookachieve = achdata[6];
+															gdashchieve = achdata[7];
+															burnchieve = achdata[8];
+															monsterchieve = achdata[10];
+															gemchieve = achdata[11];
+															pongchieve = achdata[12];
+														}
+													}
+													if (arpos == 1) {
+														hrt_SetOBJXY(&sprites[5], 25, 45);
+														if (keyDown(KEY_A)) {
+															g2 = g;
+															gcd2 = gcd;
+															fl2 = fl;
+															lv2 = level;
+															ea2 = ed;
+															level = hrt_LoadByte(0x06);
+															g = hrt_LoadByte(0x07);
+															gcd = hrt_LoadByte(0x08);
+															fl = hrt_LoadByte(0x09);
+															ed = hrt_LoadByte(0x0A);
+															if (level == 0) {
+																level = lv2;
+																fl = fl2;
+																gcd = gcd2;
+																g = g2;
+																ed = ea2;
+															}
+															varreset();
+															i = 0;
+															achdata[i] = hrt_LoadByte(0x24);
+															i++;
+															achdata[i] = hrt_LoadByte(0x25);
+															i++;
+															achdata[i] = hrt_LoadByte(0x26);
+															i++;
+															achdata[i] = hrt_LoadByte(0x27);
+															i++;
+															achdata[i] = hrt_LoadByte(0x28);
+															i++;
+															achdata[i] = hrt_LoadByte(0x29);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2a);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2b);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2c);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2d);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2e);
+															i++;
+															achdata[i] = hrt_LoadByte(0x2f);
+															i++;
+															achdata[i] = hrt_LoadByte(0x30);
+															i++;
+															achdata[i] = hrt_LoadByte(0x31);
+															i++;
+															achdata[i] = hrt_LoadByte(0x32);
+															i++;
+															achdata[i] = hrt_LoadByte(0x33);
+															i++;
+															achdata[i] = hrt_LoadByte(0x34);
+															i++;
+															achdata[i] = hrt_LoadByte(0x35);
+															i++;
+															achdata[i] = hrt_LoadByte(0x36);
+															i++;
+															achdata[i] = hrt_LoadByte(0x37);
+															deathchieve = achdata[3];
+															jumpchieve = achdata[4];
+															pookachieve = achdata[6];
+															gdashchieve = achdata[7];
+															burnchieve = achdata[8];
+															monsterchieve = achdata[10];
+															gemchieve = achdata[11];
+															pongchieve = achdata[12];
+														}
+													}
+													if (arpos == 2) {
+														hrt_SetOBJXY(&sprites[5], 25, 58);
+														if (keyDown(KEY_A)) {
+															g2 = g;
+															gcd2 = gcd;
+															fl2 = fl;
+															lv2 = level;
+															ea2 = ed;
+															level = hrt_LoadByte(0x0B);
+															g = hrt_LoadByte(0x0C);
+															gcd = hrt_LoadByte(0x0D);
+															fl = hrt_LoadByte(0x0E);
+															ed = hrt_LoadByte(0x0F);
+															if (level == 0) {
+																level = lv2;
+																fl = fl2;
+																gcd = gcd2;
+																g = g2;
+																ed = ea2;
+															}
+															if (!(level == 0)) {
+																i = 0;
+																achdata[i] = hrt_LoadByte(0x38);
+																i++;
+																achdata[i] = hrt_LoadByte(0x39);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3a);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3b);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3c);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3d);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3e);
+																i++;
+																achdata[i] = hrt_LoadByte(0x3f);
+																i++;
+																achdata[i] = hrt_LoadByte(0x40);
+																i++;
+																achdata[i] = hrt_LoadByte(0x41);
+																i++;
+																achdata[i] = hrt_LoadByte(0x42);
+																i++;
+																achdata[i] = hrt_LoadByte(0x43);
+																i++;
+																achdata[i] = hrt_LoadByte(0x44);
+																i++;
+																achdata[i] = hrt_LoadByte(0x45);
+																i++;
+																achdata[i] = hrt_LoadByte(0x46);
+																i++;
+																achdata[i] = hrt_LoadByte(0x47);
+																i++;
+																achdata[i] = hrt_LoadByte(0x48);
+																i++;
+																achdata[i] = hrt_LoadByte(0x49);
+																i++;
+																achdata[i] = hrt_LoadByte(0x4a);
+																i++;
+																achdata[i] = hrt_LoadByte(0x4b);
+																deathchieve = achdata[3];
+																jumpchieve = achdata[4];
+																pookachieve = achdata[6];
+																gdashchieve = achdata[7];
+																burnchieve = achdata[8];
+																monsterchieve = achdata[10];
+																gemchieve = achdata[11];
+																pongchieve = achdata[12];
+																varreset();
+															}
+														}
+													}
+													hrt_CopyOAM();
+												}
+											}
+										}
+										if (arpos == 2) { //Erase
+											hrt_SetOBJXY(&sprites[5], 173, 112);
+											if (keyDown(KEY_A)) {
+												hrt_VblankIntrWait();
+												hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
+												arpos = 0;
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(i);
+													hrt_SleepF(1);
+												}
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.img.lz", NULL), (u32)VRAM);
+												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.pal.lz", NULL), (u32)BGPaletteMem);
+												hrt_SetOBJXY(&sprites[5], 25, 32);
+												hrt_CopyOAM();
+												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
+												for (i = 0; i < 17; i++) {
+													hrt_SetFXLevel(16 - i);
+													hrt_SleepF(1);
+												}
+												hrt_SetDSPMode(4, //Mode
+													0,								  //CGB Mode
+													0,								  //Frame Select
+													0,                               //Unlocked HBlank
+													1,                               //Linear OBJ Tile Mapping
+													0,                               //Force Blank
+													0,                               //BG 0
+													0,                               //BG 1
+													1,                               //BG 2
+													0,                               //BG 3
+													1,                               //OBJ
+													0,                               //Win 0
+													0,                               //Win 1
+													0);							  //OBJWin
+												while (!(keyDown(KEY_B))) {
+													if (keyDown(KEY_UP)) {
+														while (keyDown(KEY_UP));
+														arpos--;
+													}
+													if (keyDown(KEY_DOWN)) {
+														while (keyDown(KEY_DOWN));
+														arpos++;
+													}
+													if (arpos < 0) {
+														arpos = 0;
+													}
+													if (arpos > 2) {
+														arpos = 2;
+													}
+													if (arpos == 0) {
+														hrt_SetOBJXY(&sprites[5], 25, 32);
+														if (keyDown(KEY_A)) {
+															for (i = 0; i != 16; i++) {
+																hrt_Memcpy(&SaveData[0x01], 0x02000100 + 0xffff, 5);
+																hrt_Memcpy(&SaveData[0x10], 0x02000100 + 0xffff, 20);
+															}
+														}
+													}
+													if (arpos == 1) {
+														hrt_SetOBJXY(&sprites[5], 25, 45);
+														if (keyDown(KEY_A)) {
+															for (i = 0; i != 16; i++) {
+																hrt_Memcpy(&SaveData[0x06], 0x02000100, 5);
+																hrt_Memcpy(&SaveData[0x24], 0x02000100, 20);
+															}
+														}
+													}
+													if (arpos == 2) {
+														hrt_SetOBJXY(&sprites[5], 25, 58);
+														if (keyDown(KEY_A)) {
+															hrt_Memcpy(&SaveData[0x0B], 0x02000100, 5);
+															hrt_Memcpy(&SaveData[0x38], 0x02000100, 20);
+														}
+													}
+													hrt_CopyOAM(); //Copies OBJ Attrib
+												}
+											}
+										}
+										hrt_CopyOAM(); //Copies OBJ Attrib
+									}
+								}
+								if (arpos == 0)
+								{
+									unpause = 1;
+								}
+							}
                         }
                         hrt_SetDSPMode(4, //Mode
                                        0,								  //CGB Mode
@@ -3213,6 +3325,10 @@ int main()   //Entry Point
                         hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
                         hrt_SetOBJXY(&sprites[5], 240, 160); //Spr5 Offscreen
                         hrt_SetOBJXY(&sprites[6], 240, 160); //Spr6 Offscreen
+						if (achiup == 1)
+						{
+							hrt_SetOBJXY(&sprites[7], 0, 0);
+						}
                         hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
                         for (i = 0; i < 17; i++) {
                             hrt_SetFXLevel(16 - i);
@@ -3220,6 +3336,8 @@ int main()   //Entry Point
                         }
                         musici = 0;
                         music = mmEffectEx(&bgm);
+						gci = 0;
+						pi = 0;
                     }
                 }
             }

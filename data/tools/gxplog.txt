@@ -1,12 +1,12 @@
 STATUS: Validatating gr.
 WARNING:   No explicit src path.
 STATUS: Validation succeeded.
-STATUS: Started run at: 2018-04-19, 13:50:36
+STATUS: Started run at: 2018-04-30, 16:55:12
 STATUS: Validatating gr.
 STATUS: Validation succeeded.
 STATUS: Preparing data.
 STATUS: Work-DIB creation.
-STATUS: Work-DIB creation complete: 32x32@8.
+STATUS: Work-DIB creation complete: 32x512@8.
 STATUS: Tile preparation.
 STATUS:   tiling to 8x8 tiles.
 STATUS: Tile preparation complete.
@@ -15,5 +15,5 @@ STATUS: Graphics preparation complete.
 STATUS: Palette preparation.
 STATUS: Palette preparation complete.
 STATUS: Data preparation complete.
-STATUS: Export to C: shrink9 into C:\Users\nickm\Desktop\Code\Game Boy Advance\Super Block Jump Demake\files\src\shrink9.c .
+STATUS: Export to C: sprs into C:\Users\nickm\Desktop\Code\Game Boy Advance\Super Block Jump Demake\files\src\sprs.c .
 STATUS: Run completed :).
