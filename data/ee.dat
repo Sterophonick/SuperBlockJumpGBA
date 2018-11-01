@@ -13,10 +13,10 @@ Rating: All Ages
 	crazy music
 	nerdy stuff
 	difficulty towards da end
-	takes a lot of time to beat dis gaem bruh, with saving bruh, but dis is a debug feature that will be removed in later versions bruh.
+	takes a lot of time to beat dis gaem bruh, with saving bruh.
 	SO MUCH MLG SWAG! MOM GET THE CAMERA!!!!!)
 ----------------------------------------------------------------
-Coding, gfx, level design by imadog54.
+Coding, gfx, level design by Sterophonick.
 Testing by
 	Sackboylvr567
 	Rigman2323
@@ -43,13 +43,13 @@ CRUD WADDUP
 WATCH HIM GO
 O CRUD WADDUP
 
- MMMMM
-M     M
-M        MMM  MMMM   MMMM
-M           M M   M M
-M        MMMM M   M  MMM
-M     M M   M M   M     M
- MMMMM   MMM  M   M MMMM 
+ MMMMM                  M
+M     M                 M M   M
+M        MMM  MMMM      M M   M
+M           M M   M  MMMM M   M
+M        MMMM M   M M   M  MMMM
+M     M M   M M   M M   M     M
+ MMMMM   MMM  M   M  MMMM MMMM
 			 MMMM   MMM  MMM
 			 M   M M   M  M
 			 MMMM  M   M  M
@@ -58,34 +58,30 @@ M     M M   M M   M     M
 			 M   M M   M  M
 			 MMMM   MMM  MMM
 
-i can do a mickey mouse impression
-i can do an elmo impression
-
 CREDIT TO ALL THAT SUPPORT GAME BOY ADVANCE HOMEBREW DEVELOPMENT
 
 NOTICE:
 	THIS GAME IS NOT LICENSED BY OR ENDORSED BY NINTENDO OF AMERICA, NINTENDO OF JAPAN, OR ANY OF ITS SUBSIDIARIES.
 	THIS GAME WAS NOT DEVELOPED WITH ANY OFFICIAL SDKS, TOOLS, OR INFORMATION.
 	GAME BOY AND NINTENDO ARE TRADEMARKS OF NINTENDO CO. LTD.
-	THIS GAME IS FREEWARE. IT IS LICENSED UNDER THE CREATIVE COMMONS (PD). IF YOU HAPPENED TO HAVE PAID FOR THIS GAME, I SUGGEST THAT YOU GET A REFUND ASAP. I WILL NOT SELL IT; IT IS FOR FREE. 
+	THIS GAME IS FREEWARE. IT IS LICENSED UNDER THE GNU GPL (General Public License). IF YOU HAPPENED TO HAVE PAID FOR THIS GAME, I SUGGEST THAT YOU GET A REFUND ASAP. I WILL NOT SELL IT; IT IS FOR FREE. 
 
-I WOULD RECCOMEND USING ORIGINAL GBA HARDWARE TO PLAY THIS GAME, BUT USING AN EMULATOR SUCH AS mGBA, NO$GBA, OR VBA SHOULD WORK FINE.
+I WOULD RECOMMEND USING ORIGINAL GBA HARDWARE TO PLAY THIS GAME, BUT USING AN EMULATOR SUCH AS mGBA, NO$GBA, OR VBA SHOULD WORK FINE.
 
 This game's source code is included, so if you want to modify this game for your own amusement, be my guest. 
 If you were to edit this game in some way, you will need the following tools (you can get some of these from gbadev.org or other places):
-	DevKit Advance (compile the ROM File)
-	Microsoft Visual Studio 2017 (Programming)
+	devkitARM (compile the ROM File)
+	Any C IDE (Programming)
 	gbafix (Fix the ROM header so that the game can run on original hardware)
-	Bimbo (Convert backgrounds)
-	mid2s3m (Convert audio)
-	pcx2sprite (Convert objects)
-	Realworld Paint (make/edit gfx)
-	mGBA or EZ-Flash IV (Testing)
+	mmutil (Convert audio)
+	Usenti (Convert objects/backgrounds)
+	Realworld Paint/GIMP (make/edit gfx)
+	mGBA or EZ-Flash IV/Omega (Testing)
 
 Issues that I have acknowledged and don't know how to fix:
-	Input lags for about 1/2 a second in gameplay.
+	Jump Input lags for about 1/2 a second in gameplay.
 
 Notes about compilation:
 	*Recompiling the game takes a long time, I know. This is because gcc can only do so much at a time.
-	*The process wasn't as simple as converting the original program. The game had to be rewritted from scratch, and what made it more difficult was that I had to write it in another language.
+	*The process wasn't as simple as converting the original program. The game had to be rewritten from scratch, and what made it more difficult was that I had to write it in another language.
 	*There is a bit of documentation in the coding to show what exactly the game is instructed to do.

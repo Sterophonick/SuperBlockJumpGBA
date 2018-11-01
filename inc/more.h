@@ -1,4 +1,3 @@
-extern int hrt_offsetOAMData;
 u16 sbj_GetPixel(u8 x, u8 y)
 {
     return VRAM[y * 240 + x]; //returns the pixel color at the position given
@@ -22,106 +21,106 @@ void achievement(int id)
 		achii = 0;
 		if (id == 0)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach00Tiles, 1024);
 		}
 		if (id == 1)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach01Tiles, 1024);
 		}
 		if (id == 2)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach02Tiles, 1024);
 		}
 		if (id == 3)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach03Tiles, 1024);
 		}
 		if (id == 4)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach04Tiles, 1024);
 		}
 		if (id == 5)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach05Tiles, 1024);
 		}
 		if (id == 6)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach06Tiles, 1024);
 		}
 		if (id == 7)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach07Tiles, 1024);
 		}
 		if (id == 8)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach08Tiles, 1024);
 		}
 		if (id == 9)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach09Tiles, 1024);
 		}
 		if (id == 0x0a)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0aTiles, 1024);
 		}
 		if (id == 0x0b)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0bTiles, 1024);
 		}
 		if (id == 0x0c)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0cTiles, 1024);
 		}
 		if (id == 0x0d)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0dTiles, 1024);
 		}
 		if (id == 0x0e)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0eTiles, 1024);
 		}
 		if (id == 0x0f)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach0fTiles, 1024);
 		}
 		if (id == 0x10)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach10Tiles, 1024);
 		}
 		if (id == 0x11)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach11Tiles, 1024);
 		}
 		if (id == 0x12)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach12Tiles, 1024);
 		}
 		if (id == 0x13)
 		{
-			hrt_offsetOAMData = 1920;
+			__hrt_system.hrt_offsetOAMData = 1920;
 			hrt_LoadOBJGFX((void*)ach13Tiles, 1024);
 		}
 		achdata[id] = 1;
-		hrt_SetOBJXY(&sprites[50], 232, 152);
+		hrt_SetOBJXY(50, 232, 152);
 		unreadchieves = 1;
 		if (level == 103)
 		{
@@ -272,7 +271,7 @@ void topcol()
             y = 0;
             y += 0.24;
             jumps++;
-            hrt_SetOBJXY(&sprites[1], bx, by);
+            hrt_SetOBJXY(1, bx, by);
         }
         else {
             y = 0;
@@ -346,6 +345,23 @@ void die()
 void physics()
 {
 	if ((bx < 0)OR(bx > 216)OR(by < 0)OR(by > 136)) {
+	    if(bx < 0)
+	    {
+		bx = 0;
+	    }
+	    if(bx > 216)
+	    {
+		bx = 216;
+	    }
+	    if(by < 0)
+	    {
+		by = 0;
+	    }
+	    if(by > 136)
+	    {
+		by = 136;
+	    }
+		hrt_SetOBJXY(1, bx, by);
 		die();
 	}
     if (gravity == 0) {
@@ -436,11 +452,14 @@ void levels()
     const GBFS_FILE *dat = find_first_gbfs_file(find_first_gbfs_file);
     sprintf((char*)buf, "l%d.lz", level);
     if(level==LEVEL_MAX) {
-        hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, "end.lz", 0), (unsigned long)VRAM);
+        hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, "end.lz", 0), (unsigned long)LevelBuffer);
     }
     else {
-        hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, (char*)buf, 0), (unsigned long)VRAM);
+        hrt_LZ77UnCompVRAM((unsigned long)gbfs_get_obj(dat, (char*)buf, 0), (unsigned long)LevelBuffer);
     }
+    REG_DMA3SAD = (unsigned long)LevelBuffer;
+    REG_DMA3DAD = (unsigned long)VRAM;
+    REG_DMA3CNT = 0x80000000 | 240 * 160;
 	if (pause2 == 0)
 	{
 		if (rand1 == 1)
@@ -473,7 +492,7 @@ void setbg2(u16* image, u16* pal)
     hrt_VblankIntrWait();
     REG_DMA3SAD = (unsigned long)image;
     hrt_LoadBGPal(pal, 255);
-	hrt_ResetOffset(3);
+	hrt_SetOffset(3, 0);
     REG_DMA3DAD = (unsigned long)VRAM;
     REG_DMA3CNT = 0x80000000 | 120 * 160;
 }
@@ -482,7 +501,7 @@ void setbg2novb(u16* image, u16* pal)
 {
     REG_DMA3SAD = (unsigned long)image;
     hrt_LoadBGPal(pal, 255);
-	hrt_ResetOffset(3);
+	hrt_SetOffset(3, 0);
     REG_DMA3DAD = (unsigned long)VRAM;
     REG_DMA3CNT = 0x80000000 | 120 * 160;
 }
@@ -494,55 +513,55 @@ void goalanim()
 		gi++;
 		if (gi == 0)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+			hrt_SetOBJXY(2, 223, 128); //Goal Pos
 		}
 		if (gi == 1)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 130); //Goal Pos
+			hrt_SetOBJXY(2, 223, 130); //Goal Pos
 		}
 		if (gi == 2)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 132); //Goal Pos
+			hrt_SetOBJXY(2, 223, 132); //Goal Pos
 		}
 		if (gi == 3)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 134); //Goal Pos
+			hrt_SetOBJXY(2, 223, 134); //Goal Pos
 		}
 		if (gi == 4)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 132); //Goal Pos
+			hrt_SetOBJXY(2, 223, 132); //Goal Pos
 		}
 		if (gi == 5)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 130); //Goal Pos
+			hrt_SetOBJXY(2, 223, 130); //Goal Pos
 		}
 		if (gi == 6)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+			hrt_SetOBJXY(2, 223, 128); //Goal Pos
 		}
 		if (gi == 7)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 126); //Goal Pos
+			hrt_SetOBJXY(2, 223, 126); //Goal Pos
 		}
 		if (gi == 8)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 124); //Goal Pos
+			hrt_SetOBJXY(2, 223, 124); //Goal Pos
 		}
 		if (gi == 9)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 122); //Goal Pos
+			hrt_SetOBJXY(2, 223, 122); //Goal Pos
 		}
 		if (gi == 10)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 124); //Goal Pos
+			hrt_SetOBJXY(2, 223, 124); //Goal Pos
 		}
 		if (gi == 11)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 126); //Goal Pos
+			hrt_SetOBJXY(2, 223, 126); //Goal Pos
 		}
 		if (gi == 12)
 		{
-			hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
+			hrt_SetOBJXY(2, 223, 128); //Goal Pos
 			gi = 0;
 		}
 	}

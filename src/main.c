@@ -4,6 +4,8 @@ void vblfunc();
 extern const u8 soundbank_bin_end[];
 extern const u8 soundbank_bin[];
 extern const u32 soundbank_bin_size;
+extern gba_system __hrt_system;
+u16 LevelBuffer[38400] HRT_EWRAM_DATA;
 #include "..\inc\defs.h" //external definitions, variables
 #include "..\inc\soundbank.h"
 #include "..\inc\more.h" //other functions
@@ -37,14 +39,24 @@ SRAM Slots:
 #define PLAY_OAM 88
 #define PONG_OAM 120
 #define RESTART_OAM 152
-#define SPIKE_OAM 184
+#define SPIKE_OAM 184 
 #define TINFOIL_OAM 120
 #define ENEMY_OAM 360
 
+void vblFunc()
+{
+	hrt_CopyOAM();
+	mmFrame();
+    if((keyDown(KEY_A))AND(keyDown(KEY_B))AND(keyDown(KEY_SELECT))AND(keyDown(KEY_START))) {
+        hrt_RegisterRamReset(hrt_ConfigRegisterRamReset(0,0,0,0,0,0,0,1));
+        hrt_SoftReset();
+    }
+}
+
 int main()   //Entry Point
 {
-	hrt_EnableSoftReset();
-    hrt_Init(1);
+	//hrt_EnableRTC();
+    hrt_Init();
     mmInitDefault((mm_addr)soundbank_bin, 8);
     REG_SOUNDCNT_H = 0x330E;
     mm_sound_effect logotheme = {
@@ -143,6 +155,7 @@ int main()   //Entry Point
     mm_sfxhand lgthme = 0;
     mm_sfxhand pnch = 0;
     mm_sfxhand music = 0;
+	mmSetVBlankHandler(vblFunc);
     if(!((hrt_GetBiosChecksum()==0xBAAE187F)||(hrt_GetBiosChecksum()==0xBAAE1880))) {
         hrt_SetDSPMode(3, //Mode
                        0,								  //CGB Mode
@@ -190,7 +203,7 @@ int main()   //Entry Point
         }
         while (!(((keyDown(KEY_A))OR(keyDown(KEY_B))))); //waits until a or b is pressed
         if (keyDown(KEY_A)) {
-            hrt_FillScreen(3, 0x0000); //makes whole screen black
+            hrt_FillScreen(0x0000); //makes whole screen black
             hrt_PrintOnBitmap(0, 0, "ARE YOU SURE?"); //draws text
             hrt_PrintOnBitmap(0, 9, "ALL DATA WILL BE ERASED."); //draws text
             while (((keyDown(KEY_A))OR(keyDown(KEY_B)))) {
@@ -203,7 +216,7 @@ int main()   //Entry Point
                 while (((keyDown(KEY_A))OR(keyDown(KEY_B)))) {
                     hrt_VblankIntrWait();
                 } //waits until a or b is not pressed
-                hrt_FillScreen(3, 0x0000); //makes screen black
+                hrt_FillScreen(0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
                 hrt_Memcpy(SRAM, 0x02000100, 0xFFFF); //clears SRAM
                 hrt_SleepF(240); //Sleeps for 4 seconds
@@ -214,7 +227,7 @@ int main()   //Entry Point
                 asm volatile("swi 0x26"::); //resets console
             }
             else {
-                hrt_FillScreen(3, 0x0000); //clears screen
+                hrt_FillScreen(0x0000); //clears screen
                 hrt_PrintOnBitmap(-1, 0, "THE PROCESS WAS ABORTED."); //draws text
                 hrt_PrintOnBitmap(-1, 9, "THE SYSTEM WILL NOW RESTART."); //draws text
                 while (!(KEY_ANY_PRESSED)) {
@@ -224,7 +237,7 @@ int main()   //Entry Point
             }
         }
         else {
-            hrt_FillScreen(3, 0x0000);
+            hrt_FillScreen(0x0000);
             hrt_PrintOnBitmap(-1, 0, "THE PROCESS WAS ABORTED."); //draws text
             hrt_PrintOnBitmap(-1, 9, "THE SYSTEM WILL NOW RESTART."); //draws text
             while (!(KEY_ANY_PRESSED)) {
@@ -374,7 +387,7 @@ int main()   //Entry Point
 			hrt_BottomWipe(0x0000, 1, 3); //scanlines wipe
 		}
 		hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
-        hrt_FillScreen(3, 0x0000); //makes screne black
+        hrt_FillScreen(0x0000); //makes screne black
         hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
         for (i = 0; i < 17; i++) {
             hrt_SetFXLevel(i);
@@ -803,8 +816,8 @@ int main()   //Entry Point
             }
             music = mmEffectEx(&bgm);
             varreset();
-            hrt_SetOBJXY(&sprites[4], 0, 152);
-            hrt_SetOBJXY(&sprites[2], 223, 128);
+            hrt_SetOBJXY(4, 0, 152);
+            hrt_SetOBJXY(2, 223, 128);
             while (1) {
 				if (achiup == 1)
 				{
@@ -816,7 +829,7 @@ int main()   //Entry Point
 					achitimer++;
 					hrt_SetFXMode(0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 					hrt_CreateOBJ(7, 240, 160, 3, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 120);
-					hrt_SetOBJXY(&sprites[7], 0, 0);
+					hrt_SetOBJXY(7, 0, 0);
 					hrt_CopyOAM();
 					if (achiphase == 0)
 					{
@@ -862,6 +875,9 @@ int main()   //Entry Point
 						}
 					}
 				}
+                if(deathstate == 0) {
+                    physics();
+                }
                 rand1 = hrt_CreateRNG() % 3;
 				hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
                 hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 10); //Color Changing text
@@ -876,43 +892,43 @@ int main()   //Entry Point
                     if (!(deathframe == 10)) {
                         deathframe++;
                         if (deathframe == 1) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink1Tiles, 512);
                         }
                         if (deathframe == 2) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink2Tiles, 512);
                         }
                         if (deathframe == 3) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink3Tiles, 512);
                         }
                         if (deathframe == 4) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink4Tiles, 512);
                         }
                         if (deathframe == 5) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink5Tiles, 512);
                         }
                         if (deathframe == 6) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink6Tiles, 512);
                         }
                         if (deathframe == 7) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink7Tiles, 512);
                         }
                         if (deathframe == 8) {
-                            hrt_ResetOffset(0);
+                            hrt_SetOffset(0, 0);
                             hrt_LoadOBJGFX((void*)shrink8Tiles, 512);
                         }
 						if (deathframe == 9) {
-							hrt_ResetOffset(0);
+							hrt_SetOffset(0, 0);
 							hrt_LoadOBJGFX((void*)shrink9Tiles, 512);
 						}
 						if (deathframe == 10) {
-							hrt_ResetOffset(0);
+							hrt_SetOffset(0, 0);
 							hrt_LoadOBJGFX((void*)shrinkaTiles, 512);
 						}
                     }
@@ -920,12 +936,9 @@ int main()   //Entry Point
                         deathstate = 0;
                         bx = 8;
                         by = 108;
-                        hrt_ResetOffset(0);
+						hrt_SetOffset(0, 0);
                         hrt_LoadOBJGFX((void*)sprsTiles, 512);
                     }
-                }
-                if(deathstate == 0) {
-                    physics();
                 }
                 if (musici > 1320) {
                     music = mmEffectEx(&bgm);
@@ -1007,7 +1020,7 @@ int main()   //Entry Point
                                   0,								 //Priority
                                   248);							 //Offset
                     if (td == 1) {
-                        hrt_SetOBJXY(&sprites[5], 128, ty);
+                        hrt_SetOBJXY(5, 128, ty);
                         if (NOT(ty < 0)) {
                             ty -= 4;
                         }
@@ -1016,7 +1029,7 @@ int main()   //Entry Point
                         }
                     }
                     else {
-                        hrt_SetOBJXY(&sprites[5], 128, ty);
+                        hrt_SetOBJXY(5, 128, ty);
                         if (NOT(ty > 113)) {
                             ty += 4;
                         }
@@ -1025,7 +1038,7 @@ int main()   //Entry Point
                         }
                     }
                     if (td2 == 1) {
-                        hrt_SetOBJXY(&sprites[6], 64, ty2);
+                        hrt_SetOBJXY(6, 64, ty2);
                         if (NOT(ty2 < 0)) {
                             ty2 -= 3;
                         }
@@ -1034,7 +1047,7 @@ int main()   //Entry Point
                         }
                     }
                     else {
-                        hrt_SetOBJXY(&sprites[6], 64, ty2);
+                        hrt_SetOBJXY(6, 64, ty2);
                         if (NOT(ty2 > 113)) {
                             ty2 += 3;
                         }
@@ -1064,9 +1077,9 @@ int main()   //Entry Point
                                   0,							     //Mode
                                   0,								 //Priority
                                   184);							 //Offset
-                    hrt_SetOBJXY(&sprites[5], 240, 160);
+                    hrt_SetOBJXY(5, 240, 160);
                     if (sd == 1) {
-                        hrt_SetOBJXY(&sprites[6], 128, sy);
+                        hrt_SetOBJXY(6, 128, sy);
                         if (NOT(sy < 0)) {
                             sy -= 4;
                         }
@@ -1075,7 +1088,7 @@ int main()   //Entry Point
                         }
                     }
                     else {
-                        hrt_SetOBJXY(&sprites[6], 128, sy);
+                        hrt_SetOBJXY(6, 128, sy);
                         if (NOT(sy > 81)) {
                             sy += 4;
                         }
@@ -1125,7 +1138,7 @@ int main()   //Entry Point
                                       0,							     //Mode
                                       0,								 //Priority
                                       296);							 //Offset
-                        hrt_SetOBJXY(&sprites[5], 98, 66);
+                        hrt_SetOBJXY(5, 98, 66);
                         if (g == 1) {
                             hrt_CreateOBJ(5,   //Sprite ID
                                           240,							     //Start X
@@ -1190,11 +1203,11 @@ int main()   //Entry Point
                                       360);							 //Offset
                         es = 1;
                         ex = 64;
-                        hrt_SetOBJXY(&sprites[5], 64, 81);
+                        hrt_SetOBJXY(5, 64, 81);
                     }
                     if (ed == 1) {
                         sprites[5].attribute1 = 3 * 16384 | 81;
-                        hrt_SetOBJXY(&sprites[5], ex, 81);
+                        hrt_SetOBJXY(5, ex, 81);
                         if (NOT(ex < 64)) {
                             ex -= 3;
                         }
@@ -1204,7 +1217,7 @@ int main()   //Entry Point
                     }
                     if (ed == 0) {
                         sprites[5].attribute1 = 3 * 16384 | 4096 | 81;
-                        hrt_SetOBJXY(&sprites[5], ex, 81);
+                        hrt_SetOBJXY(5, ex, 81);
                         if (NOT(ex > 160)) {
                             ex += 3;
                         }
@@ -1222,8 +1235,8 @@ int main()   //Entry Point
                         ed = 3;
                         fx = 0;
                         enedeth = mmEffectEx(&eneded);
-                        hrt_SetOBJXY(&sprites[3], 240, 160);
-                        hrt_SetOBJXY(&sprites[5], 240, 160);
+                        hrt_SetOBJXY(3, 240, 160);
+                        hrt_SetOBJXY(5, 240, 160);
                         if(monsterchieve==0) {
                             achievement(10);
 							achiframe = 0;
@@ -1283,7 +1296,7 @@ int main()   //Entry Point
                                   0,							     //Mode
                                   0,								 //Priority
                                   56);							 //Offset
-                    hrt_SetOBJXY(&sprites[5], 104, 64);
+                    hrt_SetOBJXY(5, 104, 64);
                     if ((bx > 80)AND(by > 40)AND(bx < 136)AND(by < 96)) {
                         if (keyDown(KEY_A)) {
                             mm_sound_effect jmp = {
@@ -1342,18 +1355,25 @@ int main()   //Entry Point
                         else if (level == 34) {
                             bx = 195;
                             by = 4;
+							y = abs(y);
                         }
                         else if (level == 35) {
                             bx = 140;
                             by = 97;
+							x = y;
+							y = 0;
                         }
                         else if (level == 36) {
                             bx = 6;
                             by = 31;
+							x = y;
+							y = 0;
                         }
                         else if (level == 37) {
                             bx = 173;
                             by = 5;
+							y = x;
+							x = 0;
                         }
                         else if (level == 38) {
                             bx = 16;
@@ -1362,6 +1382,7 @@ int main()   //Entry Point
                         else if (level == 39) {
                             bx = 124;
                             by = 5;
+							x = abs(x);
                         }
                         else if (level == 42) {
                             bx = 196;
@@ -1420,19 +1441,19 @@ int main()   //Entry Point
                                       0,								 //Priority
                                       32);							 //Offset
                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l85b.lz", NULL), (u32)VRAM);
-                        hrt_SetOBJXY(&sprites[3], 240, 160);
+                        hrt_SetOBJXY(3, 240, 160);
                         fb = 0;
                         gcd = 1;
                     }
                     if ((gcbt == 0)AND(gcd==0)) {
                         if (gcbx == 0) {
-                            hrt_SetOBJXY(&sprites[5], 80, by);
+                            hrt_SetOBJXY(5, 80, by);
                             gcbx = 1;
                             gctx = 80;
                             gcby = by;
                         }
                         if (gcbx == 1) {
-                            hrt_SetOBJXY(&sprites[5], gctx, gcby);
+                            hrt_SetOBJXY(5, gctx, gcby);
                             if(gctx < 0) {
                                 gctx -= 4;
                                 if ((bx - 24 > gctx)AND(bx > gctx + 8)AND(by + 24 > gcby)AND(by < gcby + 8)) {
@@ -1440,12 +1461,12 @@ int main()   //Entry Point
                                         die();
                                     }
                                     gcbx = 0;
-                                    hrt_SetOBJXY(&sprites[5], 240, 160);
+                                    hrt_SetOBJXY(5, 240, 160);
                                 }
                             }
                             else {
                                 gctx = 0;
-                                hrt_SetOBJXY(&sprites[5], 240,160);
+                                hrt_SetOBJXY(5, 240,160);
                             }
                         }
                     }
@@ -1487,7 +1508,7 @@ int main()   //Entry Point
                         psx = 4;
                         pong = mmEffectEx(&png);
                     }
-                    hrt_SetOBJXY(&sprites[5], px, py);
+                    hrt_SetOBJXY(5, px, py);
                     if ((bx > px - 24)AND(bx < px + 16)AND(by > py - 24)AND(by < py + 16)) {
                         if (deathstate == 0) {
                             die();
@@ -1532,14 +1553,14 @@ int main()   //Entry Point
                 }
                 if ((fb == 1)AND(NOT(fx > 240))) {
                     fx += 5;
-                    hrt_SetOBJXY(&sprites[3], fx, fy);
+                    hrt_SetOBJXY(3, fx, fy);
                 }
                 else {
                     fx = 0;
                     fb = 0;
-                    hrt_SetOBJXY(&sprites[3], 0, 160);
+                    hrt_SetOBJXY(3, 0, 160);
                 }
-				hrt_SetOBJXY(&sprites[1], bx, by);
+				hrt_SetOBJXY(1, bx, by);
                 if (level == 103) {
                     if (fl == 0) {
                         hrt_CopyOAM();
@@ -1809,7 +1830,7 @@ int main()   //Entry Point
                     if ((by < 45)AND(bx > 130)AND(bx < 149)) {
                         if (gravity == 1) {
                             hrt_VblankIntrWait();
-                            hrt_FillScreen(3, 0x0000);
+                            hrt_FillScreen(0x0000);
                             hrt_SetDSPMode(4, //Mode
                                            0,								  //CGB Mode
                                            0,								  //Frame Select
@@ -1839,7 +1860,7 @@ int main()   //Entry Point
                             hrt_SleepF(250);
                             hrt_SaveByte(0, 1);
                             hrt_VblankIntrWait();
-                            asm volatile("swi 0x26"::);
+							hrt_EZ4Exit();
                         }
                         if (end == 0) {
                             hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
@@ -1860,10 +1881,10 @@ int main()   //Entry Point
                     jumpchieve=1;
                 }
                 if(unreadchieves==1) {
-                    hrt_SetOBJXY(&sprites[50], 232, 152);
+                    hrt_SetOBJXY(50, 232, 152);
                 }
                 else {
-                    hrt_SetOBJXY(&sprites[50], 240, 160);
+                    hrt_SetOBJXY(50, 240, 160);
                 }
                 if (keyDown(KEY_START)) {
                     mmStop();
@@ -1896,10 +1917,10 @@ int main()   //Entry Point
                                        0);							  //OBJWin
                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.img.lz", NULL), (u32)VRAM);
                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.pal.lz", NULL), (u32)BGPaletteMem);
-                        hrt_SetOBJXY(&sprites[1], 240, 160);
-                        hrt_SetOBJXY(&sprites[2], 240, 160);
-                        hrt_SetOBJXY(&sprites[3], 240, 160);
-                        hrt_SetOBJXY(&sprites[4], 240, 160);
+                        hrt_SetOBJXY(1, 240, 160);
+                        hrt_SetOBJXY(2, 240, 160);
+                        hrt_SetOBJXY(3, 240, 160);
+                        hrt_SetOBJXY(4, 240, 160);
                         hrt_CreateOBJ(5,   //Sprite ID
                                       1,							     //Start X
                                       16,							     //Start Y
@@ -1963,10 +1984,10 @@ int main()   //Entry Point
 										hrt_SetFXLevel(i);
 										hrt_SleepF(1);
 									}
-									hrt_SetOBJXY(&sprites[5], 240, 160);
-									hrt_SetOBJXY(&sprites[6], 240, 160);
+									hrt_SetOBJXY(5, 240, 160);
+									hrt_SetOBJXY(6, 240, 160);
 									unreadchieves = 0;
-									hrt_SetOBJXY(&sprites[50], 240, 160);
+									hrt_SetOBJXY(50, 240, 160);
 									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.img.lz", NULL), (u32)VRAM);
 									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "achievements.pal.lz", NULL), (u32)BGPaletteMem);
 									if (achdata[0] == 1) {
@@ -1985,7 +2006,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[0], achdatax[0], achdatay[0]);
+										hrt_SetOBJXY(0, achdatax[0], achdatay[0]);
 									}
 									if (achdata[1] == 1) {
 										hrt_CreateOBJ(1,   //Sprite ID
@@ -2003,7 +2024,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[1], achdatax[1], achdatay[1]);
+										hrt_SetOBJXY(1, achdatax[1], achdatay[1]);
 									}
 									if (achdata[2] == 1) {
 										hrt_CreateOBJ(2,   //Sprite ID
@@ -2021,7 +2042,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[2], achdatax[2], achdatay[2]);
+										hrt_SetOBJXY(3, achdatax[2], achdatay[2]);
 									}
 									if (achdata[3] == 1) {
 										hrt_CreateOBJ(3,   //Sprite ID
@@ -2039,7 +2060,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[3], achdatax[3], achdatay[3]);
+										hrt_SetOBJXY(3, achdatax[3], achdatay[3]);
 									}
 									i = 4;
 									if (achdata[i] == 1) {
@@ -2058,7 +2079,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 5;
 									if (achdata[i] == 1) {
@@ -2077,7 +2098,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 6;
 									if (achdata[i] == 1) {
@@ -2096,7 +2117,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 7;
 									if (achdata[i] == 1) {
@@ -2115,7 +2136,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 8;
 									if (achdata[i] == 1) {
@@ -2134,7 +2155,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 9;
 									if (achdata[i] == 1) {
@@ -2153,7 +2174,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 10;
 									if (achdata[i] == 1) {
@@ -2172,7 +2193,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 11;
 									if (achdata[i] == 1) {
@@ -2191,7 +2212,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 12;
 									if (achdata[i] == 1) {
@@ -2210,7 +2231,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 13;
 									if (achdata[i] == 1) {
@@ -2229,7 +2250,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 14;
 									if (achdata[i] == 1) {
@@ -2248,7 +2269,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 15;
 									if (achdata[i] == 1) {
@@ -2267,7 +2288,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 16;
 									if (achdata[i] == 1) {
@@ -2286,7 +2307,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 17;
 									if (achdata[i] == 1) {
@@ -2305,7 +2326,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 18;
 									if (achdata[i] == 1) {
@@ -2324,7 +2345,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									i = 19;
 									if (achdata[i] == 1) {
@@ -2343,7 +2364,7 @@ int main()   //Entry Point
 											0,							     //Mode
 											0,								 //Priority
 											492);                       //Offset
-										hrt_SetOBJXY(&sprites[i], achdatax[i], achdatay[i]);
+										hrt_SetOBJXY(i, achdatax[i], achdatay[i]);
 									}
 									hrt_CopyOAM();
 									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
@@ -2355,45 +2376,45 @@ int main()   //Entry Point
 										hrt_VblankIntrWait();
 									}
 									i = 0;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									i++;
-									hrt_SetOBJXY(&sprites[i], 240, 160);
+									hrt_SetOBJXY(i, 240, 160);
 									hrt_CopyOAM();
 									pause2 = 0; //Exits Pause
 									hrt_SetDSPMode(4, //Mode
@@ -2425,10 +2446,10 @@ int main()   //Entry Point
 										0,							     //Mode
 										0,								 //Priority
 										280);							 //Offset
-									hrt_SetOBJXY(&sprites[4], 0, 152); //Version pos
-									hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
-									hrt_SetOBJXY(&sprites[5], 240, 160); //Spr5 Offscreen
-									hrt_SetOBJXY(&sprites[6], 240, 160); //Spr6 Offscreen
+									hrt_SetOBJXY(4, 0, 152); //Version pos
+									hrt_SetOBJXY(2, 223, 128); //Goal Pos
+									hrt_SetOBJXY(5, 240, 160); //Spr5 Offscreen
+									hrt_SetOBJXY(6, 240, 160); //Spr6 Offscreen
 									hrt_CreateOBJ(3,   //Sprite ID
 										240,							     //Start X
 										160,							     //Start Y
@@ -2444,7 +2465,7 @@ int main()   //Entry Point
 										0,							     //Mode
 										0,								 //Priority
 										32);							 //Offset
-									hrt_SetOBJXY(&sprites[4], 0, 152);
+									hrt_SetOBJXY(4, 0, 152);
 									hrt_CreateOBJ(1,   //Sprite ID
 										240,							     //Start X
 										160,							     //Start Y
@@ -2524,9 +2545,7 @@ int main()   //Entry Point
 									hrt_VblankIntrWait();
 									hrt_VblankIntrWait();
 									REG_DISPCNT = 0x80; //Force White screen
-									while (!((startpressed)AND(selectpressed)));//Waits until Sel+Start are pressed
-									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.img.lz", NULL), (u32)VRAM);
-									hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "pause.pal.lz", NULL), (u32)BGPaletteMem);
+									hrt_Suspend();
 									hrt_SetFXLevel(0);
 									hrt_SetDSPMode(4, //Mode
 										0,								  //CGB Mode
@@ -2566,8 +2585,8 @@ int main()   //Entry Point
 										0,							     //Mode
 										0,								 //Priority
 										50);							 //Offset
-									hrt_SetOBJXY(&sprites[5], 15, 112); //Move Arrow
-									hrt_SetOBJXY(&sprites[6], 240, 160); //Moves Sprite 6 offscreen
+									hrt_SetOBJXY(5, 15, 112); //Move Arrow
+									hrt_SetOBJXY(6, 240, 160); //Moves Sprite 6 offscreen
 									hrt_CopyOAM(); //Copies Object Attributes
 									hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
 									for (i = 0; i < 17; i++) {
@@ -2606,7 +2625,7 @@ int main()   //Entry Point
 											arpos = 2;
 										}
 										if (arpos == 0) {
-											hrt_SetOBJXY(&sprites[5], 15, 112);
+											hrt_SetOBJXY(5, 15, 112);
 											if (keyDown(KEY_A)) {
 												arpos = 0;
 												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
@@ -2616,7 +2635,7 @@ int main()   //Entry Point
 												}
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.img.lz", NULL), (u32)VRAM);
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "save.pal.lz", NULL), (u32)BGPaletteMem);
-												hrt_SetOBJXY(&sprites[5], 25, 32); //Arrow
+												hrt_SetOBJXY(5, 25, 32); //Arrow
 												hrt_CopyOAM(); //Copies OBJ Attrib
 												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
 												for (i = 0; i < 17; i++) {
@@ -2655,7 +2674,7 @@ int main()   //Entry Point
 														arpos = 2;
 													}
 													if (arpos == 0) {
-														hrt_SetOBJXY(&sprites[5], 25, 32);
+														hrt_SetOBJXY(5, 25, 32);
 														if (keyDown(KEY_A)) {
 															hrt_SaveByte(0x01, level); //Saves
 															hrt_SaveByte(0x02, g);
@@ -2705,7 +2724,7 @@ int main()   //Entry Point
 														}
 													}
 													if (arpos == 1) {
-														hrt_SetOBJXY(&sprites[5], 25, 45);
+														hrt_SetOBJXY(5, 25, 45);
 														if (keyDown(KEY_A)) {
 															hrt_SaveByte(0x06, level);
 															hrt_SaveByte(0x07, g);
@@ -2755,7 +2774,7 @@ int main()   //Entry Point
 														}
 													}
 													if (arpos == 2) {
-														hrt_SetOBJXY(&sprites[5], 25, 58); //Arrow Position
+														hrt_SetOBJXY(5, 25, 58); //Arrow Position
 														if (keyDown(KEY_A)) {
 															hrt_SaveByte(0x0B, level); //Saves
 															hrt_SaveByte(0x0C, g);
@@ -2809,7 +2828,7 @@ int main()   //Entry Point
 											}
 										}
 										if (arpos == 1) { //Load
-											hrt_SetOBJXY(&sprites[5], 94, 112);
+											hrt_SetOBJXY(5, 94, 112);
 											if (keyDown(KEY_A)) {
 												arpos = 0;
 												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
@@ -2819,7 +2838,7 @@ int main()   //Entry Point
 												}
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.img.lz", NULL), (u32)VRAM);
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "load.pal.lz", NULL), (u32)BGPaletteMem);
-												hrt_SetOBJXY(&sprites[5], 25, 32);
+												hrt_SetOBJXY(5, 25, 32);
 												hrt_CopyOAM();
 												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
 												for (i = 0; i < 17; i++) {
@@ -2858,7 +2877,7 @@ int main()   //Entry Point
 														arpos = 2;
 													}
 													if (arpos == 0) {
-														hrt_SetOBJXY(&sprites[5], 25, 32);
+														hrt_SetOBJXY(5, 25, 32);
 														if (keyDown(KEY_A)) {
 															g2 = g;
 															gcd2 = gcd;
@@ -2929,7 +2948,7 @@ int main()   //Entry Point
 														}
 													}
 													if (arpos == 1) {
-														hrt_SetOBJXY(&sprites[5], 25, 45);
+														hrt_SetOBJXY(5, 25, 45);
 														if (keyDown(KEY_A)) {
 															g2 = g;
 															gcd2 = gcd;
@@ -3000,7 +3019,7 @@ int main()   //Entry Point
 														}
 													}
 													if (arpos == 2) {
-														hrt_SetOBJXY(&sprites[5], 25, 58);
+														hrt_SetOBJXY(5, 25, 58);
 														if (keyDown(KEY_A)) {
 															g2 = g;
 															gcd2 = gcd;
@@ -3077,7 +3096,7 @@ int main()   //Entry Point
 											}
 										}
 										if (arpos == 2) { //Erase
-											hrt_SetOBJXY(&sprites[5], 173, 112);
+											hrt_SetOBJXY(5, 173, 112);
 											if (keyDown(KEY_A)) {
 												hrt_VblankIntrWait();
 												hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 5); //Color Changing text
@@ -3089,7 +3108,7 @@ int main()   //Entry Point
 												}
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.img.lz", NULL), (u32)VRAM);
 												hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "erase.pal.lz", NULL), (u32)BGPaletteMem);
-												hrt_SetOBJXY(&sprites[5], 25, 32);
+												hrt_SetOBJXY(5, 25, 32);
 												hrt_CopyOAM();
 												hrt_SetFXMode(1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0);
 												for (i = 0; i < 17; i++) {
@@ -3126,28 +3145,28 @@ int main()   //Entry Point
 														arpos = 2;
 													}
 													if (arpos == 0) {
-														hrt_SetOBJXY(&sprites[5], 25, 32);
+														hrt_SetOBJXY(5, 25, 32);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SaveData[0x01], 0x02000100 + 0xffff, 5);
-																hrt_Memcpy(&SaveData[0x10], 0x02000100 + 0xffff, 20);
+																hrt_Memcpy(&SRAM[0x01], 0x02000100 + 0xffff, 5);
+																hrt_Memcpy(&SRAM[0x10], 0x02000100 + 0xffff, 20);
 															}
 														}
 													}
 													if (arpos == 1) {
-														hrt_SetOBJXY(&sprites[5], 25, 45);
+														hrt_SetOBJXY(5, 25, 45);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SaveData[0x06], 0x02000100, 5);
-																hrt_Memcpy(&SaveData[0x24], 0x02000100, 20);
+																hrt_Memcpy(&SRAM[0x06], 0x02000100, 5);
+																hrt_Memcpy(&SRAM[0x24], 0x02000100, 20);
 															}
 														}
 													}
 													if (arpos == 2) {
-														hrt_SetOBJXY(&sprites[5], 25, 58);
+														hrt_SetOBJXY(5, 25, 58);
 														if (keyDown(KEY_A)) {
-															hrt_Memcpy(&SaveData[0x0B], 0x02000100, 5);
-															hrt_Memcpy(&SaveData[0x38], 0x02000100, 20);
+															hrt_Memcpy(&SRAM[0x0B], 0x02000100, 5);
+															hrt_Memcpy(&SRAM[0x38], 0x02000100, 20);
 														}
 													}
 													hrt_CopyOAM(); //Copies OBJ Attrib
@@ -3282,7 +3301,7 @@ int main()   //Entry Point
                                       0,							     //Mode
                                       0,								 //Priority
                                       s6o);							 //Offset
-                        hrt_SetOBJXY(&sprites[4], 0, 152);
+                        hrt_SetOBJXY(4, 0, 152);
                         hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
                         for (i = 0; i < 17; i++) {
                             hrt_SetFXLevel(i);
@@ -3290,6 +3309,7 @@ int main()   //Entry Point
                         }
                         pause2 = 1;
                         levels();
+			unpause = 0;
                         pause2 = 0; //Exits Pause
                         if (level == 103) {
                             if (fl == 1) {
@@ -3321,13 +3341,13 @@ int main()   //Entry Point
                                        0,                               //Win 0
                                        0,                               //Win 1
                                        0);							  //OBJWin
-                        hrt_SetOBJXY(&sprites[4], 0, 152); //Version pos
-                        hrt_SetOBJXY(&sprites[2], 223, 128); //Goal Pos
-                        hrt_SetOBJXY(&sprites[5], 240, 160); //Spr5 Offscreen
-                        hrt_SetOBJXY(&sprites[6], 240, 160); //Spr6 Offscreen
+                        hrt_SetOBJXY(4, 0, 152); //Version pos
+                        hrt_SetOBJXY(2, 223, 128); //Goal Pos
+                        hrt_SetOBJXY(5, 240, 160); //Spr5 Offscreen
+                        hrt_SetOBJXY(6, 240, 160); //Spr6 Offscreen
 						if (achiup == 1)
 						{
-							hrt_SetOBJXY(&sprites[7], 0, 0);
+							hrt_SetOBJXY(7, 0, 0);
 						}
                         hrt_SetFXMode(1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0);
                         for (i = 0; i < 17; i++) {
