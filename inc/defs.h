@@ -2,6 +2,15 @@
 int bx = 17, by = 128, achiframe=0, achitimer=0, achieffa=0, achieffb=0, achiup=0, achiphase=0, achieffinc=0, ea2=0, musici=0, deaths=0, time2=0, musicsize=0, frames=0, creepdeaths=0, jumps;
 s32 px=0, py=0, psx=0, psy=0, pi=0, gci=0, fl=0, es=0, arpos=0, newframe=0, devmode=0, g2=0, gcd2=0, fl2=0, lv2=0, pdy=0, pdx=0, gemv=0, end=0, empty=0, empty2=0, why=0, jumpt=0, sndtmr=0, deatht=0, dir=0, start=0, g=0, nostart=0, level=0, pause2=0, charactercollision=0, ex=0, ea=0, ed=0, em=0, gm=0, tm=0, td=0, td2=0, ty=0, ty2=0, sm=0, sy=0, sd=0, fezaud=0, gcd=0, alock=0, block=0, sellock=0, RNGSeed=0, realrng=0, RNGRSeed=0, gravity=0, restart=0, fx=0, fy=0, fb=0, i=0, unreadchieves=0, studentchieve=0, parkourchieve=0, captainchieve=0, deathchieve=0, jumpchieve=0, cryptchieve=0, harpchieve=0, gdashchieve=0, burnchieve=0, mazechieve=0, gemchieve=0, pongchieve=0, portalchieve=0, monsterchieve=0, pookachieve=0, saveone=0, savetwo=0, savethree=0, crash=0, gy=0, gi=0, gcbt=0, gcbx=0, gcby=0, gctx=0, wipe=0, rand1=0, deathstate=0, deathframe = 0, unpause = 0;
 u32 s1o=0, s2o=0, s3o=0, s4o=0, s5o=0, s6o=0;
+
+u8 musicno=0;
+
+//Cheats for Emulators/EZ-Flash Omega
+u8 *invincible = (u8*)0x30049A0;
+u8 *instantlevel = (u8*)0x30049A1;
+u8 *walkthrough = (u8*)0x30049A2;
+u8 *airjump = (u8*)0x30049A3;
+
 u8 achii = 0;
 int levelmax = 146;
 char buf[255];
@@ -150,5 +159,5 @@ extern const unsigned short ach11Tiles[];
 extern const unsigned short ach12Tiles[];
 extern const unsigned short ach13Tiles[];
 
-#define LEVEL_MAX 146
+#define LEVEL_MAX 149
 #define notificationcolor 0x9f

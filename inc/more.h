@@ -204,6 +204,7 @@ void bottomcol()
 
 void rightcol()
 {
+	if(*walkthrough == 0) {
     if ((sbj_GetPixel(bx + 24 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 24 + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 23 + x, by + 1) == 0x64c0)) {
         if (keyDown(KEY_A)AND(alock == 0)) {
 			mm_sound_effect jmp = {
@@ -230,10 +231,12 @@ void rightcol()
             bx -= 1;
         }
     }
+	}
 }
 
 void leftcol()
 {
+	if(*walkthrough == 0) {
     if ((sbj_GetPixel(bx + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 1 + x, by + 1) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 22) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 21) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 20) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 19) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 18) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 17) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 16) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 15) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 14) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 13) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 12) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 11) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 10) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 9) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 8) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 7) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 6) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 5) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 4) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 3) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 2) == 0x64c0)OR(sbj_GetPixel(bx + 2 + x, by + 1) == 0x64c0)) {
         if (keyDown(KEY_A)AND(alock == 0)) {
 			alock = 1;
@@ -260,6 +263,7 @@ void leftcol()
             bx += 1;
         }
     }
+	}
 }
 
 void topcol()
@@ -322,6 +326,8 @@ void topcol()
 
 void die()
 {
+	if(*invincible == 0)
+	{
     x = 0;
     y = 0;
     restart = 0;
@@ -341,6 +347,7 @@ void die()
 	};
 	mm_sfxhand death = 0;
 	death = mmEffectEx(&ded);
+	}
 }
 void physics()
 {
@@ -363,6 +370,30 @@ void physics()
 	    }
 		hrt_SetOBJXY(1, bx, by);
 		die();
+	}
+	if(*airjump == 1)
+	{
+		if((keyDown(KEY_A))AND(alock==0))
+		{
+		    mm_sound_effect jmp = {
+                { SFX_JUMP },			// id
+                (int)(1.0f * (1 << 10)),	// rate
+                0,		// handle
+                255,	// volume
+                0,	// panning
+            };
+            mm_sfxhand jump = 0;
+			mmEffectCancel(jump);
+            jump = mmEffectEx(&jmp);
+            jumps++;
+			alock = 1;
+			if(gravity == 0)
+			{
+				y = -4.05;
+			}else{
+				y = 4.05;
+			}
+		}
 	}
     if (gravity == 0) {
         y += 0.24;
@@ -391,7 +422,7 @@ void physics()
     leftcol();
     rightcol();
     topcol();
-    if ((bx > 199)AND(by > 104)) {
+    if (((bx > 199)AND(by > 104))OR((*instantlevel == 1)AND(keyDown(KEY_R)))) {
         level++;
         if ((level == 59)AND(g == 0)) {
             level--;
@@ -462,7 +493,7 @@ void levels()
     REG_DMA3CNT = 0x80000000 | 240 * 160;
 	if (pause2 == 0)
 	{
-		if (rand1 == 1)
+		if (rand1 == 0)
 		{
 			mm_sound_effect cp1 = {
 				{ SFX_COMPLETE },			// id
@@ -474,7 +505,7 @@ void levels()
 			mm_sfxhand complete1 = 0;
 			complete1 = mmEffectEx(&cp1);
 		}
-		else {
+		else if (rand1 == 1){
 			mm_sound_effect cp2 = {
 				{ SFX_COMPLETE2 },			// id
 				(int)(1.0f * (1 << 10)),	// rate
@@ -484,6 +515,17 @@ void levels()
 			};
 			mm_sfxhand complete2 = 0;
 			complete2 = mmEffectEx(&cp2);
+		}
+		else {
+			mm_sound_effect cp3 = {
+				{ SFX_COMPLETE3 },			// id
+				(int)(1.0f * (1 << 10)),	// rate
+				0,		// handle
+				255,	// volume
+				0,	// panning
+			};
+			mm_sfxhand complete3 = 0;
+			complete3 = mmEffectEx(&cp3);
 		}
 	}
 }

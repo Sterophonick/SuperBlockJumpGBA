@@ -1,0 +1,2 @@
+mmutil -osoundbank.bin -hsoundbank.h achievement.wav buzz.wav complete.wav complete2.wav complete3.wav death.wav enedeath.wav jump.wav logotheme.wav music.wav pong.wav pooka.wav portal.wav punch.wav rebootdisc.wav secretsolved.wav static.wav song2.mod song3.xm song4.s3m song5.xm trampoline.wav song6.xm song7.xm
+bin2s soundbank.bin > soundbank.s

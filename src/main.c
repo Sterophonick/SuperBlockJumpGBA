@@ -57,7 +57,8 @@ int main()   //Entry Point
 {
 	//hrt_EnableRTC();
     hrt_Init();
-    mmInitDefault((mm_addr)soundbank_bin, 8);
+    mmInitDefault((mm_addr)soundbank_bin, 32);
+	mmSetModuleVolume(512);
     REG_SOUNDCNT_H = 0x330E;
     mm_sound_effect logotheme = {
         { SFX_LOGOTHEME },			// id
@@ -749,7 +750,7 @@ int main()   //Entry Point
                           1,							     //Color setting
                           0,							     //Mode
                           0,								 //Priority
-                          32);							 //Offset
+                          32);			 				 //Offset
             hrt_CreateOBJ(4,   //Sprite ID
                           240,							     //Start X
                           160,							     //Start Y
@@ -758,12 +759,12 @@ int main()   //Entry Point
                           0,							     //Horizontal Flip
                           0,							     //Vertical Flip
                           1,							     //Shape
-                          0,							     //Double Size
+                          0,			 				     //Double Size
                           0,							     //Mosaic
                           0,							     //Palette (16-Color only)
                           1,							     //Color setting
                           0,							     //Mode
-                          0,								 //Priority
+                          0,			 					 //Priority
                           280);							 //Offset
             hrt_CreateOBJ(5,   //Sprite ID
                           240,							     //Start X
@@ -814,7 +815,33 @@ int main()   //Entry Point
                 hrt_SetFXLevel(16-i);
                 hrt_SleepF(8);
             }
-            music = mmEffectEx(&bgm);
+			musicno = hrt_CreateRNG() % 7;
+			switch(musicno)
+			{
+				case 0:
+				    music = mmEffectEx(&bgm);
+					break;
+				case 1:
+					mmStart(MOD_SONG2, MM_PLAY_LOOP);
+					break; 
+				case 2:
+					mmStart(MOD_SONG3, MM_PLAY_LOOP);
+					break;
+				case 3:
+					mmStart(MOD_SONG4, MM_PLAY_LOOP);
+					break;
+				case 4:
+					mmStart(MOD_SONG5, MM_PLAY_LOOP);
+					break;
+				case 5:
+					mmSetModuleVolume(768);
+					mmStart(MOD_SONG6, MM_PLAY_LOOP);
+					break;
+				case 6:
+					mmSetModuleVolume(1024);
+					mmStart(MOD_SONG7, MM_PLAY_LOOP);
+					break;
+			}
             varreset();
             hrt_SetOBJXY(4, 0, 152);
             hrt_SetOBJXY(2, 223, 128);
@@ -881,7 +908,7 @@ int main()   //Entry Point
                 rand1 = hrt_CreateRNG() % 3;
 				hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
                 hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 10); //Color Changing text
-				hrt_CopyOAM();
+				hrt_CopyOAM(); 
                 hrt_VblankIntrWait();
 				frames++;
 				rand1 = hrt_CreateRNG() % 3;
@@ -940,6 +967,7 @@ int main()   //Entry Point
                         hrt_LoadOBJGFX((void*)sprsTiles, 512);
                     }
                 }
+				if(musicno == 0) {
                 if (musici > 1320) {
                     music = mmEffectEx(&bgm);
                     musici = 0;
@@ -947,6 +975,7 @@ int main()   //Entry Point
                 else {
                     musici++;
                 }
+			}
                 if ((BlockTouchingColor(0x001F) == 1)) {
                     if (deathstate == 0) {
                         die();
@@ -1567,6 +1596,7 @@ int main()   //Entry Point
                         while (!(keyDown(KEY_UP))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1574,10 +1604,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_UP))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1585,10 +1617,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_UP))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1596,10 +1630,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_UP))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1607,8 +1643,10 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_DOWN))) {
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1616,11 +1654,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
                         }
                         while ((keyDown(KEY_DOWN))) {
-                            hrt_VblankIntrWait();
+                           if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1628,12 +1667,14 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+						   }
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
                         }
                         while (!(keyDown(KEY_DOWN))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1641,10 +1682,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_DOWN))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1652,10 +1695,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_LEFT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1663,10 +1708,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_LEFT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1674,10 +1721,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_RIGHT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1685,10 +1734,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_RIGHT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1696,10 +1747,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_LEFT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1707,10 +1760,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_LEFT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1718,10 +1773,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_RIGHT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1729,10 +1786,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_RIGHT))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1740,10 +1799,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_B))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1751,10 +1812,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_B))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1762,10 +1825,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_A))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1773,10 +1838,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_A))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1784,10 +1851,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while (!(keyDown(KEY_START))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1795,10 +1864,12 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         while ((keyDown(KEY_START))) {
                             hrt_VblankIntrWait();
                             hrt_VblankIntrWait();
+							if(musicno == 0) {
                             if (musici > 1320) {
                                 music = mmEffectEx(&bgm);
                                 musici = 0;
@@ -1806,6 +1877,7 @@ int main()   //Entry Point
                             else {
                                 musici++;
                             }
+							}
                         }
                         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "l103b.lz", NULL), (u32)VRAM);
                         fl = 1;
@@ -3355,7 +3427,31 @@ int main()   //Entry Point
                             hrt_SleepF(1);
                         }
                         musici = 0;
-                        music = mmEffectEx(&bgm);
+						musicno = hrt_CreateRNG() % 7;
+			switch(musicno)
+			{
+				case 0:
+				    music = mmEffectEx(&bgm);
+					break;
+				case 1:
+					mmStart(MOD_SONG2, MM_PLAY_LOOP);
+					break; 
+				case 2:
+					mmStart(MOD_SONG3, MM_PLAY_LOOP);
+					break;
+				case 3:
+					mmStart(MOD_SONG4, MM_PLAY_LOOP);
+					break;
+				case 4:
+					mmStart(MOD_SONG5, MM_PLAY_LOOP);
+					break;
+				case 5:
+					mmStart(MOD_SONG6, MM_PLAY_LOOP);
+					break;
+				case 6:
+					mmStart(MOD_SONG7, MM_PLAY_LOOP);
+					break;
+			}
 						gci = 0;
 						pi = 0;
                     }
