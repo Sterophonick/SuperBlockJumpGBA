@@ -7,7 +7,7 @@ ELFS = build/main.elf
 ASM = src/soundbank.s
 CFLAGS = -DHRT_WITH_LIBHEART -g -O3 -Wall -Wextra -ffast-math -mcpu=arm7tdmi -mtune=arm7tdmi
 ARCH = -marm -mthumb-interwork
-LIBS = -lheart -lm
+LIBS = -lheart_old -lm
 SPECS = -specs=gba.specs
 PREFIX = $(DEVKITARM)/bin/arm-none-eabi-
 default: sbj.gba
