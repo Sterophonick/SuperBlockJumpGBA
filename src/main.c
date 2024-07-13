@@ -6,9 +6,9 @@ extern const u8 soundbank_bin[];
 extern const u32 soundbank_bin_size;
 extern gba_system __hrt_system;
 u16 LevelBuffer[38400] HRT_EWRAM_DATA;
-#include "..\inc\defs.h" //external definitions, variables
-#include "..\inc\soundbank.h"
-#include "..\inc\more.h" //other functions
+#include "../inc/defs.h" //external definitions, variables
+#include "../inc/soundbank.h"
+#include "../inc/more.h" //other functions
 
 #define startpressed keyDown(KEY_START)
 #define selectpressed keyDown(KEY_SELECT)

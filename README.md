@@ -1,6 +1,10 @@
 # Super Block Jump: Game Boy Advance Edition
 An official Game Boy Advance Port of Super Block Jump made by the same creator of the scratch game.
 
+# Notes about Building
+An old version of devkitPro and HeartLib are required to build this.
+https://github.com/Sterophonick/HeartLib
+
 # Controls:
 	Gameplay:
 		A - Jump

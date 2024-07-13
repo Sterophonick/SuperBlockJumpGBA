@@ -9,7 +9,7 @@ CFLAGS = -DHRT_WITH_LIBHEART -Wall -Wextra -O3 -ffast-math -mlong-calls -mcpu=ar
 ARCH = -mthumb -mthumb-interwork -LC:\devkitPro\devkitARM\lib
 LIBS = -lheart -lm
 SPECS = -specs=gba.specs
-PREFIX = C:\devkitPro\devkitARM\bin\arm-none-eabi-
+PREFIX = $(DEVKITARM)/bin/arm-none-eabi-
 default: sbj.gba
 lvls: $(LEVELS)
 lzs: $(LZFILES)
@@ -17,16 +17,16 @@ bgs: $(BGS)
 data: build/data.gbadata
 
 build/%.bin: data/%.bmp
-	data/tools/bmp2bin -g $< $@
+	bmp2bin -g $< $@
 
 build/%.lz: build/%.bin
-	data/tools/cl -LV $< -O $@ 
+	gbalzss --vram e $< $@
 
 build/data.sbj:
 	$(MAKE) bgs
 	$(MAKE) lvls
 	$(MAKE) lzs
-	data/tools/gbfs build/data.gbadata build/*.lz
+	gbfs build/data.gbadata build/*.lz
 
 build/%.o: src/%.c
 	$(PREFIX)gcc $(CFLAGS) $(ARCH) -c $< -o $@
@@ -43,11 +43,11 @@ build/main.elf: $(OBJECTS)
 sbj.gba: $(ELFS) build/data.sbj
 	-rm -f build/*.h
 	$(PREFIX)objcopy -O binary $(ELFS) main.gba
-	data/tools/padbin 256 main.gba
+	padbin 256 main.gba
 	cat main.gba build/data.gbadata>main2.gba
 	cat main2.gba data/ee.dat>sbj.gba
 	rm main2.gba main.gba
-	C:/devkitPro/devkitARM/bin/gbafix sbj.gba -tSupaBlokJump -cSBJU -v1
+	gbafix sbj.gba -tSupaBlokJump -cSBJU -v1
 
 clean:
 	-rm -f build/*.o
@@ -61,70 +61,70 @@ asm:
 	$(PREFIX)gcc $(CFLAGS) $(ARCH) -S src\main.c
 
 build/bg.img.bin: data/m4/bg.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/black_final.img.bin: data/m4/black_final.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/bsod.img.bin: data/m4/bsod.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/controlspage1.img.bin: data/m4/controlspage1.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/controlspage2.img.bin: data/m4/controlspage2.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/achievements.img.bin: data/m4/achievements.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/discliamer.img.bin: data/m4/discliamer.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/erase.img.bin: data/m4/erase.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/gbadev.img.bin: data/m4/gbadev.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/imadog.img.bin: data/m4/imadog.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/killscreen.img.bin: data/m4/killscreen.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/load.img.bin: data/m4/load.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/pause.img.bin: data/m4/pause.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/save.img.bin: data/m4/save.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/scratch.img.bin: data/m4/scratch.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/slyangel.img.bin: data/m4/slyangel.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/sramc.img.bin: data/m4/sramc.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/srame.img.bin: data/m4/srame.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/sramm.img.bin: data/m4/sramm.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/stat1.img.bin: data/m4/stat1.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/stat2.img.bin: data/m4/stat2.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 
 build/thx.img.bin: data/m4/thx.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
 	
 build/pauses.img.bin: data/m4/pauses.bmp
-	data/tools/grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
+	grit $< -W3 -ftb -m! -gB8 -p -g -gu8 -pu8 -gb -h! -o$@
