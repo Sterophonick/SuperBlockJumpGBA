@@ -10,6 +10,8 @@ extern gba_system __hrt_system;
 #include "../inc/soundbank.h"
 #include "../inc/more.h" //other functions
 
+#include "../inc/flash.h" //batteryless patch
+
 #define startpressed keyDown(KEY_START)
 #define selectpressed keyDown(KEY_SELECT)
 /*
