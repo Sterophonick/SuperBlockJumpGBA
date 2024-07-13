@@ -60,7 +60,12 @@ int main()   //Entry Point
 {
 	//hrt_EnableRTC();
 
-    hrt_Init();
+    // hrt_Init();
+
+    __hrt_system.hrt_start = 1;
+    REG_IME = 1;
+    hrt_irqInit();
+    hrt_irqEnable(IRQ_VBLANK);
 
     // FLASH PATCH
     flash_entrypoint();
@@ -227,8 +232,13 @@ int main()   //Entry Point
                 } //waits until a or b is not pressed
                 hrt_FillScreen(0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
-                hrt_Memcpy(SRAM, (u8*)0x02000100, 0xFFFF); //clears SRAM
-                hrt_SleepF(240); //Sleeps for 4 seconds
+                hrt_Memcpy(SRAM, (u8*)0x02000600, 0xFFFF); //clears SRAM
+                //hrt_SleepF(240); //Sleeps for 4 seconds
+
+                // FLASH PATCH
+
+                copyToFlash();
+
                 hrt_PrintOnBitmap(-1, 0, "THE SYSTEM WILL NOW RESTART."); //draw text
                 while (!(KEY_ANY_PRESSED)) {
                     hrt_VblankIntrWait();
@@ -286,14 +296,16 @@ int main()   //Entry Point
         hrt_SleepF(60); //Waits 1 Second
         hrt_SaveByte(0, 0); //Resets crash variable
         hrt_PrintOnBitmap(8, 8, "HAHAHAHAHAHAHAHAHAHAH!"); //Draws text
+
+        //FLASH PATCH
+
+        copyToFlash();
+
         while (!(KEY_ANY_PRESSED)) {
             hrt_VblankIntrWait();
         } //Waits until any button is pressed
         asm volatile("swi 0x26"::); //resets console
     }
-
-    hrt_SaveByte(0, 2);
-    copyToFlash();
 
     if ((crash == 0)AND(saveone == 0)AND(savetwo == 0)AND(savethree == 0)AND(RNGSeed == 0)) {
         empty = 1; //empty
@@ -566,6 +578,10 @@ int main()   //Entry Point
         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "bsod.img.lz", NULL), (u32)VRAM);
         hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "bsod.pal.lz", NULL), (u32)BGPaletteMem);
         hrt_SaveByte(0, 2);
+
+        // FLASH PATCH
+         copyToFlash();
+
         while (1) {
             hrt_VblankIntrWait();
         }

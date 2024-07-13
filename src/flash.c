@@ -229,7 +229,7 @@ void save_sram_FLASH()
     flash_write(flash_type, (u32)flash_sram_area);
 }
 
-void flash_entrypoint()
+EWRAM_CODE void flash_entrypoint()
 {
     flash_type = get_flash_type();
     memcpy(AGB_SRAM, ((u8*)AGB_ROM+(u32)flash_sram_area), AGB_SRAM_SIZE);
