@@ -68,7 +68,11 @@ int main()   //Entry Point
     hrt_irqEnable(IRQ_VBLANK);
 
     // FLASH PATCH
-    flash_entrypoint();
+    flash_type = get_flash_type();
+    bytecopy(AGB_SRAM, ((void*)AGB_ROM+(u32)flash_sram_area), AGB_SRAM_SIZE);
+
+
+    //flash_entrypoint();
 
     mmInitDefault((mm_addr)soundbank_bin, 32);
 	mmSetModuleVolume(512);
@@ -232,7 +236,7 @@ int main()   //Entry Point
                 } //waits until a or b is not pressed
                 hrt_FillScreen(0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
-                hrt_Memcpy(SRAM, (u8*)0x02000600, 0xFFFF); //clears SRAM
+                hrt_Memcpy(SRAM, (u8*)0x02001000, 0xFFFF); //clears SRAM
                 //hrt_SleepF(240); //Sleeps for 4 seconds
 
                 // FLASH PATCH
@@ -243,7 +247,7 @@ int main()   //Entry Point
                 while (!(KEY_ANY_PRESSED)) {
                     hrt_VblankIntrWait();
                 }//waits until any key is pressed
-                asm volatile("swi 0x26"::); //resets console
+                asm volatile("swi 0x260000"::); //resets console
             }
             else {
                 hrt_FillScreen(0x0000); //clears screen
@@ -252,7 +256,7 @@ int main()   //Entry Point
                 while (!(KEY_ANY_PRESSED)) {
                     hrt_VblankIntrWait();
                 } //waits until any key is pressed
-                asm volatile("swi 0x26"::); //resets console
+                asm volatile("swi 0x260000"::); //resets console
             }
         }
         else {
@@ -262,7 +266,7 @@ int main()   //Entry Point
             while (!(KEY_ANY_PRESSED)) {
                 hrt_VblankIntrWait();
             } //waits until any key pressed
-            asm volatile("swi 0x26"::); //resets console
+            asm volatile("swi 0x260000"::); //resets console
         }
     }
     const GBFS_FILE *dat = find_first_gbfs_file(find_first_gbfs_file); //defines GBFS file
@@ -304,7 +308,7 @@ int main()   //Entry Point
         while (!(KEY_ANY_PRESSED)) {
             hrt_VblankIntrWait();
         } //Waits until any button is pressed
-        asm volatile("swi 0x26"::); //resets console
+        asm volatile("swi 0x260000"::); //resets console
     }
 
     if ((crash == 0)AND(saveone == 0)AND(savetwo == 0)AND(savethree == 0)AND(RNGSeed == 0)) {
@@ -547,6 +551,10 @@ int main()   //Entry Point
     while (!(keyDown(KEY_START))) {
         hrt_VblankIntrWait();
     }
+
+    // TEST: make sure we are are we are on a goofy ahh cartridge
+    //if(flash_type) crash = 1;
+
     if (crash == 1) { //Crash
         hrt_VblankIntrWait();
         hrt_SetDSPMode(4, //Mode
@@ -1965,7 +1973,10 @@ int main()   //Entry Point
                             hrt_SleepF(250);
                             hrt_SaveByte(0, 1);
                             hrt_VblankIntrWait();
-							hrt_EZ4Exit();
+
+                            // FLASH PATCH
+                            copyToFlash();
+							asm("swi 0x260000"::);
                         }
                         if (end == 0) {
                             hrt_LZ77UnCompVRAM((u32)gbfs_get_obj(dat, "ende.lz", NULL), (u32)VRAM);
@@ -2826,6 +2837,8 @@ int main()   //Entry Point
 															hrt_SaveByte(0x22, achdata[i]);
 															i++;
 															hrt_SaveByte(0x23, achdata[i]);
+
+                                                            copyToFlash();
 														}
 													}
 													if (arpos == 1) {
@@ -2876,6 +2889,8 @@ int main()   //Entry Point
 															hrt_SaveByte(0x36, achdata[i]);
 															i++;
 															hrt_SaveByte(0x37, achdata[i]);
+
+                                                            copyToFlash();
 														}
 													}
 													if (arpos == 2) {
@@ -2926,6 +2941,8 @@ int main()   //Entry Point
 															hrt_SaveByte(0x4a, achdata[i]);
 															i++;
 															hrt_SaveByte(0x4b, achdata[i]);
+
+                                                            copyToFlash();
 														}
 													}
 													hrt_CopyOAM(); //COpies OBJ Attrib
@@ -3253,8 +3270,8 @@ int main()   //Entry Point
 														hrt_SetOBJXY(5, 25, 32);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SRAM[0x01], (u8*)0x02000100 + 0xffff, 5);
-																hrt_Memcpy(&SRAM[0x10], (u8*)0x02000100 + 0xffff, 20);
+																hrt_Memcpy(&SRAM[0x01], (u8*)0x02001000 + 0xffff, 5);
+																hrt_Memcpy(&SRAM[0x10], (u8*)0x02001000 + 0xffff, 20);
 															}
 														}
 													}
@@ -3262,16 +3279,16 @@ int main()   //Entry Point
 														hrt_SetOBJXY(5, 25, 45);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SRAM[0x06], (u8*)0x02000100, 5);
-																hrt_Memcpy(&SRAM[0x24], (u8*)0x02000100, 20);
+																hrt_Memcpy(&SRAM[0x06], (u8*)0x02001000, 5);
+																hrt_Memcpy(&SRAM[0x24], (u8*)0x02001000, 20);
 															}
 														}
 													}
 													if (arpos == 2) {
 														hrt_SetOBJXY(5, 25, 58);
 														if (keyDown(KEY_A)) {
-															hrt_Memcpy(&SRAM[0x0B], (u8*)0x02000100, 5);
-															hrt_Memcpy(&SRAM[0x38], (u8*)0x02000100, 20);
+															hrt_Memcpy(&SRAM[0x0B], (u8*)0x02001000, 5);
+															hrt_Memcpy(&SRAM[0x38], (u8*)0x02001000, 20);
 														}
 													}
 													hrt_CopyOAM(); //Copies OBJ Attrib
