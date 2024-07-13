@@ -1,6 +1,17 @@
 # Super Block Jump: Game Boy Advance Edition
 An official Game Boy Advance Port of Super Block Jump made by the same creator of the scratch game.
 
+# Batteryless save patch
+This patch works with bootleg cartridges that rely on the games storing their data to their own flash instead of SRAM. Tested with the `4000L0ZBQ0`, but it should work on a handful of other "batteryless" bootleg cartridges.
+Also tested with `K5L2BX_32D_16D_V2`, but that does not work.
+
+## Notes & Credits:
+- As a cosmetic measure, the game sets `REG_UNKNOWN0` (Green Swap) when saving as a means of indication.
+- No bugs from the original were fixed. This is intended to be identical to the original ROM image.
+- This version WILL NOT work in emulators, it will only work with known working bootlegs.
+- Lesserkuma (Flash routines and FlashGBX)
+- Maniac (Auto Batteryless Patcher)
+
 # Notes about Building
 An old version of devkitPro and HeartLib are required to build this.
 https://github.com/Sterophonick/HeartLib
