@@ -2,19 +2,18 @@ typedef unsigned long u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 
+#include <string.h>
+
 #include "../inc/flash.h" //batteryless patch
 
 u32 total_rom_size = 0;
 u32 flash_size = 0;
-u32 flash_sram_area = (u32 *)(0x85B8D80); //hardcode flash space to 6MB offset
+u32* flash_sram_area = (u32 *)(0x5B8D80); //hardcode flash space to 6MB offset
 u8 flash_type = 0;
 
 #define REG_IE (*(volatile u16*)0x4000200)
 
-// HACK: copy code to iwram instead of ewram
-// idk why but gcc is not being nice
-__attribute__((section(".iwram")))
-u32 get_flash_type() {
+EWRAM_CODE u32 get_flash_type() {
     u32 rom_data, data;
     u16 ie = REG_IE;
     //stop_dma_interrupts();
@@ -80,11 +79,7 @@ u32 get_flash_type() {
 // write 64 kilobytes of SRAM data to Flash ROM.
 // Must run in EWRAM because ROM data is
 // not visible to the system while erasing/writing.
-
-// HACK: copy code to iwram instead of ewram
-// idk why but gcc is not being nice
-__attribute__((section(".iwram")))
-void flash_write(u8 flash_type, u32 sa)
+EWRAM_CODE void flash_write(u8 flash_type, u32 sa)
 {
     if (flash_type == 0) return;
     u16 ie = REG_IE;
@@ -231,11 +226,11 @@ void flash_write(u8 flash_type, u32 sa)
 void save_sram_FLASH()
 {
     if (flash_type == 0) return;
-    flash_write(flash_type, flash_sram_area);
+    flash_write(flash_type, (u32)flash_sram_area);
 }
 
 void flash_entrypoint()
 {
     flash_type = get_flash_type();
-    memcpy(AGB_SRAM, ((u8*)AGB_ROM+flash_sram_area), AGB_SRAM_SIZE);
+    memcpy(AGB_SRAM, ((u8*)AGB_ROM+(u32)flash_sram_area), AGB_SRAM_SIZE);
 }

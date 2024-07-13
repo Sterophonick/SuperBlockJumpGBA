@@ -5,9 +5,9 @@ BGS = build/bg.img.bin build/black_final.img.bin build/bsod.img.bin build/contro
 SOURCES = src/main.c src/rotostuff.c src/sprs.c src/bgtwo.c src/shrink1.c src/shrink2.c src/shrink3.c src/shrink4.c src/shrink5.c src/shrink6.c src/shrink7.c src/shrink8.c src/shrink9.c src/shrinka.c src/ach00.c src/ach01.c src/ach02.c src/ach03.c src/ach04.c src/ach05.c src/ach06.c src/ach07.c src/ach08.c src/ach09.c src/ach0a.c src/ach0b.c src/ach0c.c src/ach0d.c src/ach0e.c src/ach0f.c src/ach10.c src/ach11.c src/ach12.c src/ach13.c
 ELFS = build/main.elf
 ASM = src/soundbank.s
-CFLAGS = -DHRT_WITH_LIBHEART -Wall -Wextra -Os -ffast-math -mcpu=arm7tdmi -mtune=arm7tdmi -marm -faggressive-loop-optimizations -fverbose-asm
+CFLAGS = -DHRT_WITH_LIBHEART -Wall -Wextra -ffast-math -mcpu=arm7tdmi -mtune=arm7tdmi
 ARCH = -mthumb -mthumb-interwork
-LIBS = -lheart -lm
+LIBS = -lheart_old -lm
 SPECS = -specs=gba.specs
 PREFIX = $(DEVKITARM)/bin/arm-none-eabi-
 default: sbj.gba
@@ -39,7 +39,7 @@ build/%.o: data/%.c
 
 
 build/main.elf: $(OBJECTS)
-	$(PREFIX)gcc $(SPECS) $(ARCH) $(OBJECTS) $(LIBS) -o build/main.elf
+	$(PREFIX)gcc $(SPECS) $(ARCH) $(OBJECTS) -L ./libheart $(LIBS) -o build/main.elf
 
 sbj.gba: $(ELFS) build/data.sbj
 	-rm -f build/*.h

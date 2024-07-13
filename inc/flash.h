@@ -9,5 +9,7 @@ extern void save_sram_FLASH();
 
 extern u32 total_rom_size;
 extern u32 flash_size;
-extern u32 flash_sram_area; //hardcode flash space to 6MB offset
+extern u32* flash_sram_area; //hardcode flash space to 6MB offset
 extern void flash_entrypoint();
+
+#define EWRAM_CODE	__attribute__((section(".ewram"), long_call))

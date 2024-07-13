@@ -1,6 +1,6 @@
 // Main source file for Super Block Jump - Game Boy Advance Edition. Feel free to edit and recompile the source if you want. If you are to recompile the game, You will need DevKitARM and HeartLib installed.
 void vblfunc();
-#include <libheart.h> //main function library (that I made)
+#include "../heartlib/libheart.h" //main function library (that I made)
 extern const u8 soundbank_bin_end[];
 extern const u8 soundbank_bin[];
 extern const u32 soundbank_bin_size;
@@ -227,7 +227,7 @@ int main()   //Entry Point
                 } //waits until a or b is not pressed
                 hrt_FillScreen(0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
-                hrt_Memcpy(SRAM, 0x02000100, 0xFFFF); //clears SRAM
+                hrt_Memcpy(SRAM, (u8*)0x02000100, 0xFFFF); //clears SRAM
                 hrt_SleepF(240); //Sleeps for 4 seconds
                 hrt_PrintOnBitmap(-1, 0, "THE SYSTEM WILL NOW RESTART."); //draw text
                 while (!(KEY_ANY_PRESSED)) {
@@ -3237,8 +3237,8 @@ int main()   //Entry Point
 														hrt_SetOBJXY(5, 25, 32);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SRAM[0x01], 0x02000100 + 0xffff, 5);
-																hrt_Memcpy(&SRAM[0x10], 0x02000100 + 0xffff, 20);
+																hrt_Memcpy(&SRAM[0x01], (u8*)0x02000100 + 0xffff, 5);
+																hrt_Memcpy(&SRAM[0x10], (u8*)0x02000100 + 0xffff, 20);
 															}
 														}
 													}
@@ -3246,16 +3246,16 @@ int main()   //Entry Point
 														hrt_SetOBJXY(5, 25, 45);
 														if (keyDown(KEY_A)) {
 															for (i = 0; i != 16; i++) {
-																hrt_Memcpy(&SRAM[0x06], 0x02000100, 5);
-																hrt_Memcpy(&SRAM[0x24], 0x02000100, 20);
+																hrt_Memcpy(&SRAM[0x06], (u8*)0x02000100, 5);
+																hrt_Memcpy(&SRAM[0x24], (u8*)0x02000100, 20);
 															}
 														}
 													}
 													if (arpos == 2) {
 														hrt_SetOBJXY(5, 25, 58);
 														if (keyDown(KEY_A)) {
-															hrt_Memcpy(&SRAM[0x0B], 0x02000100, 5);
-															hrt_Memcpy(&SRAM[0x38], 0x02000100, 20);
+															hrt_Memcpy(&SRAM[0x0B], (u8*)0x02000100, 5);
+															hrt_Memcpy(&SRAM[0x38], (u8*)0x02000100, 20);
 														}
 													}
 													hrt_CopyOAM(); //Copies OBJ Attrib
