@@ -46,6 +46,8 @@ SRAM Slots:
 #define TINFOIL_OAM 120
 #define ENEMY_OAM 360
 
+
+
 void vblFunc()
 {
 	hrt_CopyOAM();
@@ -236,7 +238,10 @@ int main()   //Entry Point
                 } //waits until a or b is not pressed
                 hrt_FillScreen(0x0000); //makes screen black
                 hrt_PrintOnBitmap(-1, 0, "ERASING....."); //draws text
-                hrt_Memcpy(SRAM, (u8*)0x02001000, 0xFFFF); //clears SRAM
+                for(int i = 0; i < 0xFF; i++)
+                {
+                    SRAM[i] = (u8)0;
+                }
                 //hrt_SleepF(240); //Sleeps for 4 seconds
 
                 // FLASH PATCH
@@ -3273,6 +3278,9 @@ int main()   //Entry Point
 																hrt_Memcpy(&SRAM[0x01], (u8*)0x02001000 + 0xffff, 5);
 																hrt_Memcpy(&SRAM[0x10], (u8*)0x02001000 + 0xffff, 20);
 															}
+
+															//FLASH PATCH
+															copyToFlash();
 														}
 													}
 													if (arpos == 1) {
@@ -3281,7 +3289,9 @@ int main()   //Entry Point
 															for (i = 0; i != 16; i++) {
 																hrt_Memcpy(&SRAM[0x06], (u8*)0x02001000, 5);
 																hrt_Memcpy(&SRAM[0x24], (u8*)0x02001000, 20);
-															}
+                                                            }
+                                                            //FLASH PATCH
+                                                            copyToFlash();
 														}
 													}
 													if (arpos == 2) {
@@ -3289,7 +3299,9 @@ int main()   //Entry Point
 														if (keyDown(KEY_A)) {
 															hrt_Memcpy(&SRAM[0x0B], (u8*)0x02001000, 5);
 															hrt_Memcpy(&SRAM[0x38], (u8*)0x02001000, 20);
-														}
+                                                            //FLASH PATCH
+                                                            copyToFlash();
+                                                        }
 													}
 													hrt_CopyOAM(); //Copies OBJ Attrib
 												}

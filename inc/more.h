@@ -613,8 +613,11 @@ void goalanim()
 
 #define REG_UNKNOWN0	*(u16*)0x04000002 //Undocumented - Green Swap?
 
+// this distorts the screen a bit and temporarily turns off the sound
 void copyToFlash() {
 	REG_UNKNOWN0 = 1;
+	REG_SOUNDCNT_X = 0;
 	save_sram_FLASH();
 	REG_UNKNOWN0 = 0;
+	REG_SOUNDCNT_X = 0x80;
 }
