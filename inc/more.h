@@ -328,6 +328,10 @@ void die()
 {
 	if(*invincible == 0)
 	{
+		if(bx < 0)
+			bx = 0;
+		if(by < 0)
+			by = 0;
     x = 0;
     y = 0;
     restart = 0;
@@ -368,6 +372,25 @@ void physics()
 	    {
 		by = 136;
 	    }
+
+	    // HACK: force re-create block sprite so that it renders correctly
+	    // works around an signed int issue when dying at the left and top edges of the screen
+	    hrt_CreateOBJ(1,   //Sprite ID
+					  240,							     //Start X
+				   160,							     //Start Y
+				   2,							     //Size
+				   0,							     //Affine
+				   0,							     //Horizontal Flip
+				   0,							     //Vertical Flip
+				   0,							     //Shape
+				   0,							     //Double Size
+				   0,							     //Mosaic
+				   0,							     //Palette (16-Color only)
+		1,							     //Color setting
+		0,							     //Mode
+		0,								 //Priority
+		0);							 //Offset
+
 		hrt_SetOBJXY(1, bx, by);
 		die();
 	}
