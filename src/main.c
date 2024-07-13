@@ -283,6 +283,11 @@ int main()   //Entry Point
         } //Waits until any button is pressed
         asm volatile("swi 0x26"::); //resets console
     }
+
+    // test
+    hrt_SaveByte(0,1);
+    flush_sram_manual_entry();
+
     if ((crash == 0)AND(saveone == 0)AND(savetwo == 0)AND(savethree == 0)AND(RNGSeed == 0)) {
         empty = 1; //empty
     }
@@ -906,7 +911,12 @@ int main()   //Entry Point
                     physics();
                 }
                 rand1 = hrt_CreateRNG() % 3;
-				hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
+
+                // Batteryless patch note: random seed is constantly updated
+                // but only saved upon hitting the save function
+                hrt_SaveByte(0x60, (u8)hrt_CreateRNG());
+
+
                 hrt_SetOBJPalEntry(notificationcolor, hrt_GetOBJPalEntry(notificationcolor) + 10); //Color Changing text
 				hrt_CopyOAM(); 
                 hrt_VblankIntrWait();

@@ -608,3 +608,5 @@ void goalanim()
 		}
 	}
 }
+
+extern void flush_sram_manual_entry(); //flush Flash and auto write save
