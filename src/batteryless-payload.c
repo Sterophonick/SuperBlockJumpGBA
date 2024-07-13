@@ -1,4 +1,4 @@
-#define AGB_ROM  ((unsigned char*)0x8000000)
+#define AGB_ROM  ((unsigned char*)0x85B8D80)
 	#define AGB_SRAM ((volatile unsigned char*)0xE000000)
     #define SRAM_SIZE 64
 	#define AGB_SRAM_SIZE SRAM_SIZE*1024
@@ -11,7 +11,7 @@ asm(R"(.text
 original_entrypoint:
     .word 0x080000c0
 flush_mode:
-    .word 0
+    .word 1
 save_size:
     .word 0x20000
     .word patched_entrypoint
