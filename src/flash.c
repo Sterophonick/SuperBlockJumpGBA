@@ -11,7 +11,9 @@ u8 flash_type = 0;
 
 #define REG_IE (*(volatile u16*)0x4000200)
 
-__attribute__((section(".ewram")))
+// HACK: copy code to iwram instead of ewram
+// idk why but gcc is not being nice
+__attribute__((section(".iwram")))
 u32 get_flash_type() {
     u32 rom_data, data;
     u16 ie = REG_IE;
@@ -78,7 +80,10 @@ u32 get_flash_type() {
 // write 64 kilobytes of SRAM data to Flash ROM.
 // Must run in EWRAM because ROM data is
 // not visible to the system while erasing/writing.
-__attribute__((section(".ewram")))
+
+// HACK: copy code to iwram instead of ewram
+// idk why but gcc is not being nice
+__attribute__((section(".iwram")))
 void flash_write(u8 flash_type, u32 sa)
 {
     if (flash_type == 0) return;
@@ -232,4 +237,5 @@ void save_sram_FLASH()
 void flash_entrypoint()
 {
     flash_type = get_flash_type();
+    memcpy(AGB_SRAM, ((u8*)AGB_ROM+flash_sram_area), AGB_SRAM_SIZE);
 }

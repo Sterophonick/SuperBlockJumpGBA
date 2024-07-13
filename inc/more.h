@@ -608,3 +608,13 @@ void goalanim()
 		}
 	}
 }
+
+// FLASH PATCH
+
+#define REG_UNKNOWN0	*(u16*)0x04000002 //Undocumented - Green Swap?
+
+void copyToFlash() {
+	REG_UNKNOWN0 = 1;
+	save_sram_FLASH();
+	REG_UNKNOWN0 = 0;
+}

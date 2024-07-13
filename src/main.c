@@ -8,9 +8,10 @@ extern gba_system __hrt_system;
 // u16 LevelBuffer[38400] HRT_EWRAM_DATA; // why do we have this?
 #include "../inc/defs.h" //external definitions, variables
 #include "../inc/soundbank.h"
-#include "../inc/more.h" //other functions
 
 #include "../inc/flash.h" //batteryless patch
+
+#include "../inc/more.h" //other functions
 
 #define startpressed keyDown(KEY_START)
 #define selectpressed keyDown(KEY_SELECT)
@@ -58,8 +59,12 @@ void vblFunc()
 int main()   //Entry Point
 {
 	//hrt_EnableRTC();
+
     hrt_Init();
-    flash_type = get_flash_type();
+
+    // FLASH PATCH
+    flash_entrypoint();
+
     mmInitDefault((mm_addr)soundbank_bin, 32);
 	mmSetModuleVolume(512);
     REG_SOUNDCNT_H = 0x330E;
@@ -286,6 +291,9 @@ int main()   //Entry Point
         } //Waits until any button is pressed
         asm volatile("swi 0x26"::); //resets console
     }
+
+    hrt_SaveByte(0, 2);
+    copyToFlash();
 
     if ((crash == 0)AND(saveone == 0)AND(savetwo == 0)AND(savethree == 0)AND(RNGSeed == 0)) {
         empty = 1; //empty
