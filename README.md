@@ -2,7 +2,7 @@
 An official Game Boy Advance Port of Super Block Jump made by the same creator of the scratch game.
 
 # Batteryless save patch
-This patch works with bootleg cartridges that rely on the games storing their data to their own flash instead of SRAM. Tested with the `4000L0ZBQ0`, but it should work on a handful of other "batteryless" bootleg cartridges.
+This patch works with bootleg cartridges that rely on the games storing their data to their own flash instead of SRAM. Tested with the `4000L0ZBQ0` and the `M6MGJ927`, but it should work on a handful of other "batteryless" bootleg cartridges.
 Also tested with `K5L2BX_32D_16D_V2`, but that does not work.
 
 ## Notes & Credits:
